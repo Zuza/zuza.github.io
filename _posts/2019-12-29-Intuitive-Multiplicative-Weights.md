@@ -78,13 +78,13 @@ $$\to$$
 </div>
 <div class="cell">
 $$\begin{align}
-\text{min. }\ & \inner{ A^T \nabla \smax_{\beta}(A x_t), h_t } \\
+\text{min. }\ & \inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h_t } \\
 \text{s.t. }\ & h_t \in K
 \end{align}$$
 </div>
 </div>
 
-The objective of the last problem is exactly the linearized verzion of the smoothened one: define $\Phi(x) := \smax_{\beta}(Ax)$, then the linearized objective can be rewritten as $\inner{ \nabla \Phi(x_t), h_t } \approx \Phi(x_t+h_t) - \Phi(x_t)$ because clearly $\nabla \Phi(x) = A^T \nabla \smax_{\beta}(A x)$.
+Lets elaborate on the objective of the last problem. Let $\Phi(x) := \smax_{\beta}(Ax)$ be the objective of the smoothened (middle) problem. Then $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h_t }$ is exactly the linearization of $\Phi(x)$ around $x_{t-1}$. This is because $\Phi(x_{t-1} + h_t) - \Phi(x_{t-1}) \approx \inner{\nabla \Phi(x_{t-1}), h_t }$ and $\nabla \Phi(x_{t-1}) = A^T \nabla \smax_{\beta}(A x)$ by chain rule.
 
 We can now present the full multiplicative weights algorithm. We repeat the linearize-solve-update loop for a total of $T$ rounds (to be specified later). Solving the linearization problem is done via some black-box method (called the **oracle**) that needs to be supplied to the algorithm upfront. Precisely, the oracle is supplied a vector $p \in \mathbb{R}^n$ and needs to return $\arg\min_{x \in K} \inner{ p, x }$. Luckily, the linearized problem is often much simpler than the original one and can be easily optimized.
 

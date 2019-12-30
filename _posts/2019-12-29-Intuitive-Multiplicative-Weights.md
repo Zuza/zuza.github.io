@@ -2,9 +2,9 @@
 layout: post
 title: A simple analysis of multiplicative weights
 ---
-I give a clean and self-contained analysis of the multiplicative weights framework that is considerably different from the most popular analysis (see the comparison below). The framework beautifully leverages continuous analysis to solve discrete problems. Multiplicative weights provide a simple algorithm for (approximately) solving many important problems (e.g., maximum flow, densest subgraph, linear classification, zero-sum games and even general linear programs).
+I give a clean and self-contained presentation of the multiplicative weights framework that is considerably different from the most popular analysis (see the comparison below). The framework provides a simple algorithm for (approximately) solving many important problems (e.g., maximum flow, densest subgraph, linear classification, zero-sum games and even general linear programs) and is a beautiful example of leveraging continuous analysis to solve discrete problems.
 
-All of these problems can be written in the following simple form:
+All of the above problems can be written in the following simple form:
 
 $$\begin{align}
 \text{minimize }\ & \max(Ax) \\
@@ -138,7 +138,8 @@ Straighforward algebra with $T = \frac{\ln n}{\beta \cdot \eps}$ gives us that t
 
 A few final points:
 * Can can often get a better dependence on $\rho$ for special problems. E.g., one can get a linear instead of quadratic dependence of $\rho$ for positive packing and positive covering problems such as maxflow. See [AHZ] for details.
-* The above analysis is essentially equivalent to the Frank-Wolfe optimization method applied to the $\smax$ over $x \in K$.
+* The above analysis is essentially equivalent to the Frank-Wolfe method of optimization applied to the $\smax$ over $x \in K$. One can spin this to say that multiplicative weights and Frank-Wolfe are equivalent in some strong sense.
+* It would be interesting to rederive matrix multiplicative weights using an analogue of the above analysis.
 
 References:
 * [AHK] Arora, Hazan, Kale: *The Multiplicative Weights Update Method: A Meta-Algorithm and Applications*

@@ -4,7 +4,9 @@ title: About
 permalink: /about/
 ---
 
-Random musings by Goran Žužić (or "Zuzic", since entering diacritics is not unlike Russian roulette). Check out my [academic webpage](https://www.cs.cmu.edu/~gzuzic/).
+I aspire to attain an intuitive understanding of various concepts from theoretical computer science. This fledgling blog contains some byproducts of this pursuit.
+
+Written by Goran Žužić (or "Zuzic", since entering diacritics is not unlike Russian roulette). Check out my [academic webpage](https://www.cs.cmu.edu/~gzuzic/).
 
 ### Contact me
 

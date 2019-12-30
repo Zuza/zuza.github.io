@@ -283,6 +283,24 @@ footer {
   text-align: center;
 }
 
+details {
+  margin: 0 0 0 12px;
+}
+
+////////////////////////// Math and algos /////////////////////////////////
+.fact, .theorem, .lemma, .algorithm {
+    display: block;
+    padding: 0 0 0 10px;
+    font-style: italic;
+    border: solid 1px #ccc;
+}
+
+.proof:after {
+    content: "\25FC";
+    float:right;
+}
+///////////////////////// End of Math and algos ////////////////////////////////////////
+
 // Settled on moving the import of syntax highlighting to the bottom of the CSS
 // ... Otherwise it really bloats up the top of the CSS file and makes it difficult to find the start
 @import "highlights";

@@ -2,7 +2,7 @@
 layout: post
 title: A simple analysis of multiplicative weights
 ---
-I give a clean and self-contained analysis of the multiplicative weights framework that is considerably different from the most popular analysis (see the comparison below). The framework is a beautiful example of solving discrete problems with continuous analysis tools. Multiplicative weights provide a simple algorithm for (approximately) solving many important problems (e.g., maximum flow, densest subgraph, linear classification, zero-sum games).
+I give a clean and self-contained analysis of the multiplicative weights framework that is considerably different from the most popular analysis (see the comparison below). The framework beautifully leverages continuous analysis to solve discrete problems. Multiplicative weights provide a simple algorithm for (approximately) solving many important problems (e.g., maximum flow, densest subgraph, linear classification, zero-sum games and even general LP programs).
 
 All of these problems can be written in the following simple form:
 

@@ -55,7 +55,7 @@ $$\mathrm{smax}_\beta(x + h) \le \mathrm{smax}_\beta(x) + \inner{\nabla f(x), h}
 
 </div>
 
-We introduce and compare the original problem, the smoothened version and the linearized verzion around $x_t$.
+We introduce and compare the original problem, the smoothened version and the linearized version around $x_{t-1}$.
 
 <div style="display:grid;grid-template-columns:1fr 0.3fr 1fr 0.3fr 1fr;">
 <div class="cell">
@@ -84,7 +84,7 @@ $$\begin{align}
 </div>
 </div>
 
-Lets elaborate on the objective of the last problem. Let $\Phi(x) := \smax_{\beta}(Ax)$ be the objective of the smoothened (middle) problem. Then $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h_t }$ is exactly the linearization of $\Phi(x)$ around $x_{t-1}$. This is because $\Phi(x_{t-1} + h_t) - \Phi(x_{t-1}) \approx \inner{\nabla \Phi(x_{t-1}), h_t }$ and $\nabla \Phi(x_{t-1}) = A^T \nabla \smax_{\beta}(A x_{t-1})$ by chain rule.
+Lets elaborate on the objective of the last problem. Let $\Phi(x) := \smax_{\beta}(Ax)$ be the objective of the smoothened (middle) problem. Then $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h_t }$ is exactly the linearization of $\Phi(x)$ around $x_{t-1}$. This is because $\Phi(x_{t-1} + h_t) - \Phi(x_{t-1})$ is approximately $\inner{\nabla \Phi(x_{t-1}), h_t }$ and $\nabla \Phi(x_{t-1}) = A^T \nabla \smax_{\beta}(A x_{t-1})$ by chain rule.
 
 We can now present the full multiplicative weights algorithm. We repeat the linearize-solve-update loop for a total of $T$ rounds (to be specified later). Solving the linearization problem is done via some black-box method (called the **oracle**) that needs to be supplied to the algorithm upfront. Precisely, the oracle is supplied a vector $p \in \mathbb{R}^n$ and needs to return $\arg\min_{x \in K} \inner{ p, x }$. Luckily, the linearized problem is often much simpler than the original one and can be easily optimized.
 
@@ -103,7 +103,7 @@ How to choose the number of rounds $T$? It will mostly depend on two important p
 <br/>
 <details markdown="1">  <!-- markdown means the internals get parsed -->
 <summary><b>Example</b>: Multiplicative weights for maximum flow. <a>(click to expand)</a></summary>
-Suppose we want to solve maxflow between $s$ and $t$ with $1 + \eps$ relative error. We assume for simplicity that the graph is directed and uncapacitated which allows us to set $\rho = 1$. Set $\beta$ and $T$ accordingly. Let $\OPT$ be the optimal value of the problem when cast in the aforementioned standard form (which is the reciprocal of the number of edge-disjoint paths between $s$ and $t$, note that the relative error is unchanged when taking reciprocals).
+Suppose we want to solve maxflow between $s$ and $t$ with $\eps$ relative error. We assume for simplicity that the graph is directed and uncapacitated which allows us to set $\rho = 1$. Set $\beta$ and $T$ accordingly. Let $\OPT$ be the optimal value of the problem when cast in the aforementioned standard form (which is the reciprocal of the number of edge-disjoint paths between $s$ and $t$, note that the relative error is unchanged when taking reciprocals).
 
 Initialize a "congestion" vector $x := (0, 0, \ldots, 0) \in \mathbb{R}^{\vert E \vert}$ that remembers for each edge how many times has it been used. We repeat the following for $T$ rounds: for each directed edge $e$ we compute a cost $c_e := \exp(\beta x_i) > 0$. Normalize this vector of costs by dividing all entries by $$Z := \sum_{e \in E} \exp(\beta x_i)$$ that makes their sum equal to $1$ (note: this is unnecessary, but we do it to follow the algorithm). Find the shortest path $P$ between $s$ and $t$ with respect to the edge costs $c$. Update $x$ by incrementing $x_e$ for each edge $e$ that was used in the shortest path $P$.
 

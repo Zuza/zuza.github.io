@@ -17,7 +17,7 @@ Symbol $A \in \mathbb{R}^{n \times m}$ represents a matrix, $x \in \mathbb{R}^m$
 <summary><b>Example</b>: Casting maximum flow in the above form. <a>(click to expand)</a></summary>
 Suppose we are given an uncapacitated directed graph $G = (V, E)$ and we want to compute the maxflow between some $s, t \in V$. Suppose that the optimal value of this problem is $\OPT$ (i.e., there are $\OPT$ edge-disjoint paths between $s$ and $t$).
 
-We cast the problem in the above form. On a high-level, easy constraints $K$ will correspond to unit flows from $s$ to $t$. We first fix the representation of $K$: a flow $x \in K$ is a vector of dimension $\vert E \vert$, one scalar for each directed edge $e \in E$. Precisely, $x_e$ will represent the amount of flow that is pushed through $e$. This determines the representation. Now, define $K$ to be the convex hull of all simple paths from $s$ to $t$. On a side-note, this is equivalent to saying our flow is conserving in $V \setminus \\{s, t\\}$, pushes 1 unit from $s$, and contains no circulations due to the integrality of the flow polytope. While it might be strange to call this polytope with exponential number of vertices "easy constraints", we note that the only property we will need later is to optimize a linear function over $K$. However, optimizing a linear function $f(x) = \inner{c, x} = \sum_{e \in E} c_e \cdot x_e$ over $x \in K$ is exactly the problem of finding a shortest path between $s$ and $t$ with edge costs being $c \in \mathbb{R}^{\vert E \vert}$.
+We cast the problem in the above form. On a high-level, easy constraints $K$ will correspond to unit flows from $s$ to $t$. We first fix the representation of $K$: a flow $x \in K$ is a vector of dimension $\vert E \vert$, one scalar for each directed edge $e \in E$. Precisely, $x_e$ will represent the amount of flow that is pushed through $e$. This determines the representation. Now, define $K$ to be the convex hull of all simple paths from $s$ to $t$. On a side-note, this is equivalent to saying the flow $x \in K$ is conserving in $V \setminus \\{s, t\\}$, pushes 1 unit from $s$, and contains no circulations; equivalency is due to the integrality of the flow polytope. While it might be strange to call this polytope with exponential number of vertices "easy constraints", we note that the only property we will need later is to optimize a linear function over $K$. However, optimizing a linear function $f(x) = \inner{c, x} = \sum_{e \in E} c_e \cdot x_e$ over $x \in K$ is exactly the problem of finding a shortest path between $s$ and $t$ with edge costs being $c \in \mathbb{R}^{\vert E \vert}$.
 
 Roughly, we want the objective $\max(Ax)$ of our form to correspond to the maximum amount of flow going through any edge in the graph (call this the **congestion**). In other words, we claim that finding the maximum flow corresponds to finding the unit flow that minimizes the most congested edge. Clearly, if there are $\OPT$ disjoint paths we can find a unit flow with congestion $1/\OPT$. One can easily show the converse holds (if there are unit-flows with smaller congestion it leads to more edge-disjoint paths) and hence solving the above problem solves the maximum flow. Of course, the optimal value in the disjoint-path formulation and congestion-minimizing formulation will be reciprocals of each other, but the problems are otherwise equivalent. This also suggests setting the matrix $A$ to be the identity $I$, due to the representation we choose.
 </details>
@@ -49,7 +49,7 @@ $$\mathrm{smax}_{\beta}(x) \in [\max(x), \max(x) + \frac{\ln n}{\beta}]$$
 
 $$\mathrm{smax}_\beta(x + h) \le \mathrm{smax}_\beta(x) + \inner{\nabla f(x), h} + \beta\cdot \dnorm{h}_\infty^2$$
 
-* $$\smax( \pmb{0} ) = \frac{\ln n}{\beta}$$, where $\pmb{0} = [0,0,\ldots,0]^T$.
+* $$\smax( \pmb{0} ) = \frac{\ln n}{\beta}$$, where $\pmb{0} = [0,0,\ldots,0]$.
 
 </div>
 
@@ -84,13 +84,13 @@ $$\begin{align}
 
 Lets elaborate on the objective of the last problem. Let $\Phi(x) := \smax_{\beta}(Ax)$ be the objective of the smoothened (middle) problem. Then $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h_t }$ is exactly the linearization of $\Phi(x)$ around $x_{t-1}$. This is because $\Phi(x_{t-1} + h_t) - \Phi(x_{t-1})$ is approximately $\inner{\nabla \Phi(x_{t-1}), h_t }$ and $\nabla \Phi(x_{t-1}) = A^T \nabla \smax_{\beta}(A x_{t-1})$ by chain rule.
 
-We can now present the full multiplicative weights algorithm. We repeat the linearize-solve-update loop for a total of $T$ rounds (to be specified later). Solving the linearization problem is done via some black-box method (called the **oracle**) that needs to be supplied to the algorithm upfront. Precisely, the oracle is supplied a vector $p \in \mathbb{R}^n$ and needs to return $\arg\min_{x \in K} \inner{ p, x }$. Luckily, the linearized problem is often much simpler than the original one and can be easily optimized.
+We can now present the full multiplicative weights algorithm. We repeat the linearize-solve-update loop for a total of $T$ rounds (to be specified later). Solving the linearized problem is done via some black-box method (called the **oracle**) that needs to be supplied to the algorithm upfront. Precisely, the oracle is supplied a vector $p \in \mathbb{R}^n$ and needs to return $\arg\min_{x \in K} \inner{ p, x }$. Luckily, the linearized problem is often much simpler than the original one and can be easily optimized.
 
 How to choose the number of rounds $T$? It will mostly depend on two important parameters: the accuracy $\eps$ we require from the final solution, and a new parameter $\rho$ that we call the **width of the oracle**. The only requirement on the width is that $\rho$ must be larger than $$\dnorm{Ax}_\infty$$ for any $x$ that can be returned by the oracle (e.g., $\max_{x \in K} \dnorm{Ax}_\infty$ suffices).
 
 <div markdown="1" class="algorithm">
 **Algorithm (Multiplicative Weights):**
-* Input: matrix $A \in \mathbb{R}^{n \times m}$, oracle for the linearized problem, width $\rho$, accuracy $\eps$
+* Input: matrix $A \in \mathbb{R}^{n \times m}$, oracle for the linearized problem, width $\rho$, accuracy $\eps$.
 * Define $$\beta := \frac{\eps}{2 \rho^2}$$, $x_0 := 0$, $\Phi(x) := \smax_{\beta}(Ax)$, $$T := \frac{\ln n}{\beta \cdot \eps} = O(\eps^{-2} \rho^2 \ln n)$$.
 * For $t = 1 \ldots T$
   * $$h_t := \arg \min_{h \in K} \inner{ \nabla \Phi(x_{t-1}), h }$$ via the oracle
@@ -103,7 +103,7 @@ How to choose the number of rounds $T$? It will mostly depend on two important p
 <summary><b>Example</b>: Multiplicative weights for maximum flow. <a>(click to expand)</a></summary>
 Suppose we want to solve maxflow between $s$ and $t$ with $\eps$ relative error. We assume for simplicity that the graph is directed and uncapacitated which allows us to set $\rho = 1$. Set $\beta$ and $T$ accordingly. Let $\OPT$ be the optimal value of the problem when cast in the aforementioned standard form (which is the reciprocal of the number of edge-disjoint paths between $s$ and $t$, note that the relative error is unchanged when taking reciprocals).
 
-Initialize a "congestion" vector $x := [0, 0, \ldots, 0] \in \mathbb{R}^{\vert E \vert}$ that remembers for each edge how many times has it been used. We repeat the following for $T$ rounds: for each directed edge $e$ we compute a cost $c_e := \exp(\beta x_i) > 0$. Normalize this vector of costs by dividing all entries by $$Z := \sum_{e \in E} \exp(\beta x_i)$$ that makes their sum equal to $1$ (note: this is unnecessary, but we do it to follow the algorithm). Find the shortest path $P$ between $s$ and $t$ with respect to the edge costs $c$ (e.g., with a Dijkstra). Update $x$ by incrementing $x_e$ for each edge $e$ that was used in the shortest path $P$.
+Initialize a "congestion" vector $x := [0, 0, \ldots, 0] \in \mathbb{R}^{\vert E \vert}$ that remembers for each edge how many times has it been used. We repeat the following for $T$ rounds: for each directed edge $e$ we compute a cost $c_e := \exp(\beta x_i) > 0$. Normalize this vector of costs by dividing all entries by $$Z := \sum_{e \in E} \exp(\beta x_i)$$ that makes their sum equal to $1$ (note: this is unnecessary, but we do it to stay true to the algorithm). Find the shortest path $P$ between $s$ and $t$ with respect to the edge costs $c$ (e.g., with a Dijkstra). Update $x$ by incrementing $x_e$ for each edge $e$ that was used in the shortest path $P$.
 
 After the above loop terminates, the collection of all shortest paths found throughout the algorithm provide us with $T$ paths that incur congestion of at most $T \cdot (OPT + \eps)$. Scaling by $1/T$, we find a unit-flow that incurs congestion $OPT + \eps$ and we are done.
 
@@ -136,7 +136,7 @@ Straighforward algebra with $T = \frac{\ln n}{\beta \cdot \eps}$ gives us that t
 
 A few final points:
 * Can can often get a better dependence on $\rho$ for special problems. E.g., one can get a linear instead of quadratic dependence of $\rho$ for positive packing and positive covering problems such as maxflow. See [AHZ] for details.
-* The above analysis is essentially equivalent to the Frank-Wolfe method of optimization applied to the $\smax$ over $x \in K$. One can spin this to say that multiplicative weights and Frank-Wolfe are equivalent in some strong sense.
+* The above analysis is essentially equivalent to the Frank-Wolfe method of optimization applied to the $\smax$ over $x \in K$. One can say that multiplicative weights is an instance of the Frank-Wolfe method.
 * It would be interesting to rederive matrix multiplicative weights using an analogue of the above analysis.
 
 References:

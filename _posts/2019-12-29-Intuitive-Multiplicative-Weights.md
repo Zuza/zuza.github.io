@@ -47,7 +47,7 @@ $$\mathrm{smax}_{\beta}(x) \in [\max(x), \max(x) + \frac{\ln n}{\beta}]$$
 
 * $\smax_{\beta}$ is $\beta$-smooth with respect to $\dnorm{\cdot}_\infty$:
 
-$$\mathrm{smax}_\beta(x + h) \le \mathrm{smax}_\beta(x) + \inner{\nabla f(x), h} + \beta\cdot \dnorm{h}_\infty^2$$
+$$\mathrm{smax}_\beta(x + h) \le \mathrm{smax}_\beta(x) + \inner{\nabla \smax_{\beta}(x), h} + \beta\cdot \dnorm{h}_\infty^2$$
 
 * $$\smax_{\beta}( \pmb{0} ) = \frac{\ln n}{\beta}$$, where $\pmb{0} = [0,0,\ldots,0]$.
 
@@ -135,7 +135,7 @@ Straighforward algebra with $T = \frac{\ln n}{\beta \cdot \eps}$ gives us that t
 <br/>
 
 A few final points:
-* Can can often get a better dependence on $\rho$ for special problems. E.g., one can get a linear instead of quadratic dependence of $\rho$ for positive packing and positive covering problems such as maxflow. See [AHZ] for details.
+* One can often get a better dependence on $\rho$ for special problems. E.g., one can get a linear instead of quadratic dependence of $\rho$ for positive packing and positive covering problems such as maxflow. See [AHZ] for details.
 * The above analysis is essentially equivalent to the Frank-Wolfe method of optimization applied to the $\smax$ over $x \in K$. One can say that multiplicative weights is an instance of the Frank-Wolfe method.
 * It would be interesting to rederive matrix multiplicative weights using an analogue of the above analysis.
 * The algorithm is numerically stable: it can be implemented using only addition and exponentiation of positive integers.

@@ -102,14 +102,6 @@ How to choose the number of rounds $T$? It will mostly depend on two important p
 
 <br/>
 <details markdown="1">  <!-- markdown means the internals get parsed -->
-<summary><b>Low-level comparison with other analyses:</b> <a>(click to expand)</a></summary>
-Many other authors take a dual approach of the one stated above, in which one maintains a set of "multiplicative weights" or "dual variables" $y \in \mathbb{R}^n$ (one for each constraint of $K$, i.e., row of $A$). The dual roughly tells us how "important" a constraint is (e.g., if $y_3 = 100$ and $y_7 = 1$, it would mean that constraint 3 gets violated much more often and more egregiously than constraint 7). Initially, $y \gets [1, 1, \ldots, 1]$ and then for each $h$ we multiplicatively update $y$ with a value proportional to the violation $Ah$ via the formula $$y_i \gets y_i \cdot \exp\left(\beta (A h)_{i} \right)$$ for $i \in [n]$. This multiplicative reweighting of the constraint importance is the reason behind the method's name. The "linearize+solve" steps now correspond to solving $\min_{h \in K} \inner{y, A h} = \min_{h \in K} \inner{A^T y, h}$. Iteratively performing this procedure yields the same dynamics as the one described in the pseudocode above.
-
-Pattern-matching $\inner{A^T y, h}$ with $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h }$ one can, correctly, presume that the connection between the methods is that $y = \nabla \smax_{\beta}(A x_{t-1})$. This is indeed the case (up to a factor of proportionality that can be ignored), $\nabla \smax(A x_{t-1})$ is a probability distribution proportional to $\exp(\beta A(h_1 + \ldots + h_{t+1}))$ (see property 2 of $\smax$ Fact); $y$ can be easily deduced to have the same value.
-
-</details>
-
-<details markdown="1">  <!-- markdown means the internals get parsed -->
 <summary><b>Example</b>: Multiplicative weights for maximum flow. <a>(click to expand)</a></summary>
 Suppose we want to solve maxflow between $s$ and $t$ with $\eps$ relative error. We assume for simplicity that the graph is directed and uncapacitated which allows us to set $\rho = 1$. Set $\beta$ and $T$ accordingly. Let $\OPT$ be the optimal value of the problem when cast in the aforementioned standard form (which is the reciprocal of the number of edge-disjoint paths between $s$ and $t$, note that the relative error is unchanged when taking reciprocals).
 
@@ -119,6 +111,14 @@ After the above loop terminates, the collection of all shortest paths found thro
 
 Note: in the capacitated version we would need to set $\rho := 1 / c_{\min}$, where $c_{\min}$ is the minimum positive edge capacity. This is a significant downside of the method and a long line of research has been developed in order to reduce this width.
 </details>
+
+<details markdown="1">  <!-- markdown means the internals get parsed -->
+<summary><b>Low-level comparison with other analyses:</b> <a>(click to expand)</a></summary>
+Many other authors take a dual approach of the one stated above, in which one maintains a set of "multiplicative weights" or "dual variables" $y \in \mathbb{R}^n$ (one for each constraint of $K$, i.e., row of $A$). The dual roughly tells us how "important" a constraint is (e.g., if $y_3 = 100$ and $y_7 = 1$, it would mean that constraint 3 gets violated much more often and more egregiously than constraint 7). Initially, $y \gets [1, 1, \ldots, 1]$ and then for each $h$ we multiplicatively update $y$ with a value proportional to the violation $Ah$ via the formula $$y_i \gets y_i \cdot \exp\left(\beta (A h)_{i} \right)$$ for $i \in [n]$. This multiplicative reweighting of the constraint importance is the reason behind the method's name. The "linearize+solve" steps now correspond to solving $\min_{h \in K} \inner{y, A h} = \min_{h \in K} \inner{A^T y, h}$. Iteratively performing this procedure yields the same dynamics as the one described in the pseudocode above.
+
+Pattern-matching $\inner{A^T y, h}$ with $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h }$ one can, correctly, presume that the connection between the methods is that $y = \nabla \smax_{\beta}(A x_{t-1})$. This is indeed the case (up to a factor of proportionality that can be ignored), $\nabla \smax(A x_{t-1})$ is a probability distribution proportional to $\exp(\beta A(h_1 + \ldots + h_{t+1}))$ (see property 2 of $\smax$ Fact); $y$ can be easily deduced to have the same value.
+</details>
+
 
 We now prove that the above algorithm works.
 <div markdown="1" class="theorem">

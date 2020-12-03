@@ -150,7 +150,7 @@ A few final points:
 * Computational aspects (assuming non-negative entries in $A$, constant $\eps$, constant $\rho$). The algorithm is numerically stable. Examining the algorithm, the only part that might need elaboration is the computation of $\nabla \Phi(x_{t-1})$ since its direct computation involves exponentiation. We argue this exponentiation does not give raise to numerical issues.
   <center>$$\nabla \Phi(x_{t-1}) = A^T \nabla \smax_\beta(A x_{t-1})$$</center>
   <center>$$\nabla \smax_{\beta}(A x_{t-1}) = \nabla \smax_{\beta}(A \sum_{j=1}^{t-1} h_{t-1}) = \frac{1}{Z} \left[ \exp\left(\frac{\eps}{2\rho^2} (A \sum_{j=1}^{t-1} h_{j})_i \right) \right]_{i=1}^n$$</center>
-  We note that $\dnorm{Ah_j}_{\infty} \le \rho$, hence the term inside $\exp( \cdot )$ is at most $T \cdot \frac{\eps}{2\rho^2} \cdot \rho = \rho \cdot \eps^{-1} \cdot \ln n$. This quantity is $O(\log n)$ (e.g., assuming constant $\eps$, constant $\rho$), hence after exponentiating the argument, the result is at most a polynomial in $n$. Every other operation is a stable addition, multiplication, or division of positive integers, making numerical issues of no concern.
+  We note that $\dnorm{Ah_j}_{\infty} \le \rho$, hence the term inside $\exp( \cdot )$ is at most $T \cdot \frac{\eps}{2\rho^2} \cdot \rho = \rho \cdot \eps^{-1} \cdot \ln n$. This quantity is $O(\log n)$ (e.g., assuming constant $\eps$, constant $\rho$), hence after exponentiating the argument, the result is at most a polynomial in $n$. Every other operation is a stable addition, multiplication, or division of positive reals, making numerical issues of no concern.
 
 
 

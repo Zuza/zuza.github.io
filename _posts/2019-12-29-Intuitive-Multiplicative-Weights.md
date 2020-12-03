@@ -88,7 +88,7 @@ In the maxflow problem, the parameter $\beta$ is chosen to be approximately $\ep
 
 We can now present the full multiplicative weights algorithm. We repeat the linearize-solve-update loop for a total of $T$ rounds (to be specified later). Solving the linearized problem is done via some black-box method (called the **oracle**) that needs to be supplied to the algorithm upfront. Precisely, the oracle is supplied a vector $p \in \mathbb{R}^n$ and needs to return $\arg\min_{x \in K} \inner{ p, x }$. Luckily, the linearized problem is often much simpler than the original one and can be easily optimized.
 
-How to choose the number of rounds $T$? It will mostly depend on two important parameters: the accuracy $\eps$ we require from the final solution, and a new parameter $\rho$ that we call the **width of the oracle**. The only requirement on the width is that $\rho$ must be larger than $$\dnorm{Ax}_\infty$$ for any $x$ that can be returned by the oracle (e.g., $\max_{x \in K} \dnorm{Ax}_\infty$ suffices, but sometimes we can implement the oracle that achieves a better bound).
+How to choose the number of rounds $T$? It will mostly depend on two important parameters: the accuracy $\eps$ we require from the final solution, and a new parameter $\rho$ that we call the **width of the oracle**. The only requirement on the width is that $\rho \ge 1$ must be larger than $$\dnorm{Ax}_\infty$$ for any $x$ that can be returned by the oracle (e.g., $\max_{x \in K} \dnorm{Ax}_\infty$ suffices, but sometimes we can implement the oracle that achieves a better bound).
 
 <div markdown="1" class="algorithm">
 **Algorithm (Multiplicative Weights):**
@@ -147,7 +147,12 @@ Straighforward algebra with $T = \frac{\ln n}{\beta \cdot \eps}$ gives us that t
 A few final points:
 * One can often get a better dependence on $\rho$ for special problems. E.g., one can get a linear instead of quadratic dependence of $\rho$ for positive packing and positive covering problems such as maxflow. See [AHZ] for details.
 * It would be interesting to rederive matrix multiplicative weights using an analogue of the above analysis.
-* The algorithm is numerically stable: it can be implemented using only addition and exponentiation of positive integers.
+* Computational aspects (assuming non-negative entries in $A$). The algorithm is numerically stable. Examining the algorithm, the only part that might need elaboration is the computation of $\nabla \Phi(x_{t-1})$ since its direct computation involves exponentiation. We argue this exponentiation does not give raise to numerical issues.
+  <center>$$\nabla \Phi(x_{t-1}) = A^T \nabla \smax_\beta(A x_{t-1})$$</center>
+  <center>$$\nabla \smax_{\beta}(A x_{t-1}) = \nabla \smax_{\beta}(A \sum_{j=1}^{t-1} h_{t-1}) = \frac{1}{Z} \left[ \exp\left(\frac{\eps}{2\rho^2} (A \sum_{j=1}^{t-1} h_{j})_i \right) \right]_{i=1}^n$$</center>
+  We note that $\dnorm{Ah_j} \le \rho$, hence the term inside $\exp( \cdot )$ is at most $T \cdot \frac{\eps}{2\rho^2} \cdot \rho = \frac{\eps^{-1} \ln n}{\rho} \le \eps^{-1} \ln n$. This quantity is typically $O(\log n)$ (e.g., for a constant $\eps$), hence after exponentiating the argument, the result is at most a polynomial in $n$. Every other operation is a stable addition, multiplication, or division of positive integers, making numerical issues of no concern.
+
+
 
 References:
 * [AHK] Arora, Hazan, Kale: *The Multiplicative Weights Update Method: A Meta-Algorithm and Applications*

@@ -151,7 +151,7 @@ A few final points:
   <center>$$\nabla \Phi(x_{t-1}) = A^T \nabla \smax_\beta(A x_{t-1})$$</center>
   <center>$$\nabla \smax_{\beta}(A x_{t-1}) = \nabla \smax_{\beta}(A \sum_{j=1}^{t-1} h_{t-1}) = \frac{1}{Z} \left[ \exp\left(\frac{\eps}{2\rho^2} (A \sum_{j=1}^{t-1} h_{j})_i \right) \right]_{i=1}^n$$</center>
   We note that $\dnorm{Ah_j}_{\infty} \le \rho$, hence the term inside $\exp( \cdot )$ is at most $T \cdot \frac{\eps}{2\rho^2} \cdot \rho = \rho \cdot \eps^{-1} \cdot \ln n$. This quantity is $O(\log n)$ (e.g., assuming constant $\eps$, constant $\rho$), hence after exponentiating the argument, the result is at most a polynomial in $n$. Every other operation is a stable addition, multiplication, or division of positive reals, making numerical issues of no concern.
-
+* Computational aspects (assuming non-negative entries in $A$). If one explicitly recalculates $\nabla \Phi(x_{t-1})$, the intermediate numbers involved in the exponentiation might become overwhelmingly large. One possible workaround is to keep a running value of $y_{t-1} := \nabla \smax_{\beta}(x_{t-1})$. One updates $y_{t-1} \to y_t$ with $(y_{t})_i = (y_{t})_i \cdot \exp(\beta (A h_t)_i )$ and normalizing $y_t \gets y_t / Z$ where $Z := \sum_i (y_t)_i$. Then we have $\nabla \Phi(x_t) = A^T y_t$.
 
 
 References:

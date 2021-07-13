@@ -301,10 +301,12 @@ details {
 }
 
 ///////////////////////// Goran's personal stuff ///////////////////////////////////////
-span.summary-link {
-    text-decoration: underline;
+summary {
     cursor: pointer;
+}
+span.summary-link {
     color: $blue;
+    text-decoration: underline;
 }
 
 // Settled on moving the import of syntax highlighting to the bottom of the CSS

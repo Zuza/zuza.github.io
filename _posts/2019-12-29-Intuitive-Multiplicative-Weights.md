@@ -23,7 +23,7 @@ We want the objective $\max(Ax)$ of our form to correspond to the maximum amount
 </details>
 
 <details markdown="1">
-<summary><b>High-level comparison with other analyses:</b> <span class="summary-link">(click to expand)</span></summary>
+<summary><b>Digression:</b> High-level comparison with other analyses: <span class="summary-link">(click to expand)</span></summary>
 This post is inspirated by my personal struggles I had a few years back while trying to learn the multiplicative weights framework. Most popular analyses motivate the approach by *the expert prediction* algorithm [AHZ]. While the approach is intuitive by itself, my intuition completely dissapeared when using them to solve problems such as maximum flow. This is because the experts from [AHZ] essentially correspond to dual variables which are largely disconnected from the original (primal) problem. This analysis keeps the entire discussion in the primal. I have not seen this analysis written down anywhere, but I am sure researchers in the area are well-aware of it.
 
 The analysis is essentially equivalent to the Frank-Wolfe method of optimization applied to the log-sum-exp function (denoted below as $\smax$) over $x \in K$. One can say that multiplicative weights is an instance of the Frank-Wolfe method.
@@ -111,7 +111,7 @@ After the above loop terminates, the collection of all shortest paths found thro
 </details>
 
 <details markdown="1">  <!-- markdown means the internals get parsed -->
-<summary><b>Low-level comparison with other analyses:</b> <span class="summary-link">(click to expand)</span></summary>
+<summary><b>Digression:</b> Low-level comparison with other analyses. <span class="summary-link">(click to expand)</span></summary>
 Many other authors take a dual approach of the one stated above, in which one maintains a set of "multiplicative weights" or "dual variables" $y \in \mathbb{R}^n$ (one for each constraint of $K$, i.e., row of $A$). The dual roughly tells us how "important" a constraint is (e.g., if $y_3 = 100$ and $y_7 = 1$, it would mean that constraint 3 gets violated much more often and more egregiously than constraint 7). Initially, $y \gets [1, 1, \ldots, 1]$ and then for each $h$ we multiplicatively update $y$ with a value proportional to the violation $Ah$ via the formula $$y_i \gets y_i \cdot \exp\left(\beta (A h)_{i} \right)$$ for $i \in [n]$. This multiplicative reweighting of the constraint importance is the reason behind the method's name. The "linearize+solve" steps now correspond to solving $\min_{h \in K} \inner{y, A h} = \min_{h \in K} \inner{A^T y, h}$. Iteratively performing this procedure yields the same dynamics as the one described in the pseudocode above.
 
 Pattern-matching $\inner{A^T y, h}$ with $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h }$ one can, correctly, presume that the connection between the methods is that $y = \nabla \smax_{\beta}(A x_{t-1})$. This is indeed the case (up to a factor of proportionality that can be ignored), $\nabla \smax(A x_{t-1})$ is a probability distribution proportional to $\exp(\beta A(h_1 + \ldots + h_{t+1}))$ (see property 2 of $\smax$ Fact); $y$ can be easily deduced to have the same value.
@@ -120,7 +120,7 @@ Pattern-matching $\inner{A^T y, h}$ with $\inner{ A^T \nabla \smax_{\beta}(A x_{
 
 We now prove that the above algorithm works.
 <div markdown="1" class="theorem">
-**Theroem**: Let $\OPT$ be the value of the optimal solution and $\tilde{x} := x_T/T$ be the output of the algorithm. Then $\tilde{x} \in K$ and $\max(A \tilde{x}) \le OPT + \eps$.
+**Theroem**: Let $\OPT$ be the value of the optimal solution and $\tilde{x} := x_T/T$ be the output of the multiplicative weights algorithm. Then $\tilde{x} \in K$ and $\max(A \tilde{x}) \le OPT + \eps$.
 </div>
 
 <div markdown="1" class="proof">

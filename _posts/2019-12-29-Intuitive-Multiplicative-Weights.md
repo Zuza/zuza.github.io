@@ -14,7 +14,7 @@ $$\begin{align}
 Symbol $A \in \mathbb{R}^{n \times m}$ represents a matrix, $x \in \mathbb{R}^m$ is a vector we are trying to optimize over, $\max : \mathbb{R}^n \to \mathbb{R}$ returns the maximum entry of a vector (e.g., $\max([1, 3, -4]^T) = 3$), and $K$ is some convex set (often called the **easy constraints**).
 
 <details markdown="1">  <!-- markdown means the internals get parsed -->
-<summary><b>Example</b>: Casting maximum flow in the above form. <a>(click to expand)</a></summary>
+<summary><b>Example</b>: Casting maximum flow in the above form. <span class="summary-link">(click to expand)</span></summary>
 Suppose we are given an uncapacitated directed graph $G = (V, E)$ and we want to compute the maxflow between some $s, t \in V$. Suppose that the optimal value of this problem is $\OPT$ (i.e., there are $\OPT$ edge-disjoint paths between $s$ and $t$).
 
 We cast the problem in the above form. On a high-level, easy constraints $K$ will correspond to unit flows from $s$ to $t$. We first fix the representation of $K$: a flow $x \in K$ is a vector of dimension $\vert E \vert$, one scalar for each directed edge $e \in E$. Precisely, $x_e$ will represent the amount of flow that is pushed through $e$. This determines the representation. Now, define $K$ to be the convex hull of all simple paths from $s$ to $t$. On a side-note, this is equivalent to saying the flow $x \in K$ is conserving in $V \setminus \\{s, t\\}$, pushes 1 unit from $s$, and contains no circulations; equivalency is due to the integrality of the flow polytope. While it might be strange to call this polytope with exponential number of vertices "easy constraints", we only interact with $K$ by optimizing a linear function over $K$. However, optimizing a linear function $f(x) = \inner{c, x} = \sum_{e \in E} c_e \cdot x_e$ over $x \in K$ is exactly the problem of finding a shortest path between $s$ and $t$ with edge costs being $c \in \mathbb{R}^{\vert E \vert}$.
@@ -23,7 +23,7 @@ We want the objective $\max(Ax)$ of our form to correspond to the maximum amount
 </details>
 
 <details markdown="1">
-<summary><b>High-level comparison with other analyses:</b> <a>(click to expand)</a></summary>
+<summary><b>High-level comparison with other analyses:</b> <span class="summary-link">(click to expand)</span></summary>
 This post is inspirated by my personal struggles I had a few years back while trying to learn the multiplicative weights framework. Most popular analyses motivate the approach by *the expert prediction* algorithm [AHZ]. While the approach is intuitive by itself, my intuition completely dissapeared when using them to solve problems such as maximum flow. This is because the experts from [AHZ] essentially correspond to dual variables which are largely disconnected from the original (primal) problem. This analysis keeps the entire discussion in the primal. I have not seen this analysis written down anywhere, but I am sure researchers in the area are well-aware of it.
 
 The analysis is essentially equivalent to the Frank-Wolfe method of optimization applied to the log-sum-exp function (denoted below as $\smax$) over $x \in K$. One can say that multiplicative weights is an instance of the Frank-Wolfe method.
@@ -102,7 +102,7 @@ How to choose the number of rounds $T$? It will mostly depend on two important p
 
 <br/>
 <details markdown="1">  <!-- markdown means the internals get parsed -->
-<summary><b>Example</b>: Multiplicative weights for maximum flow. <a>(click to expand)</a></summary>
+<summary><b>Example</b>: Multiplicative weights for maximum flow. <span class="summary-link">(click to expand)</span></summary>
 Suppose we want to solve maxflow between $s$ and $t$ with $\eps$ additive error. We assume for simplicity that the graph is directed and uncapacitated which allows us to set $\rho = 1$. Set $\beta$ and $T$ accordingly. Let $\OPT$ be the optimal value of the problem when cast in the aforementioned standard form (e.g., $OPT = 1/F$ if the $F$ is the number of edge-disjoint paths between $s$ and $t$; note that we need to set $\eps < 1/F$ to get a good approximation).
 
 Initialize a "congestion" vector $x := [0, 0, \ldots, 0] \in \mathbb{R}^{\vert E \vert}$ that remembers for each edge how many times has it been used. We repeat the following for $T$ rounds: for each directed edge $e$ we compute a cost $c_e := \exp(\beta x_i) > 0$. Normalize this vector of costs by dividing all entries by $$Z := \sum_{e \in E} \exp(\beta x_i)$$ that makes their sum equal to $1$ (note: this is unnecessary, but we do it to stay true to the algorithm). Find the shortest path $P$ between $s$ and $t$ with respect to the edge costs $c$ (e.g., with a Dijkstra). Update $x$ by incrementing $x_e$ for each edge $e$ that was used in the shortest path $P$.
@@ -111,7 +111,7 @@ After the above loop terminates, the collection of all shortest paths found thro
 </details>
 
 <details markdown="1">  <!-- markdown means the internals get parsed -->
-<summary><b>Low-level comparison with other analyses:</b> <a>(click to expand)</a></summary>
+<summary><b>Low-level comparison with other analyses:</b> <span class="summary-link">(click to expand)</span></summary>
 Many other authors take a dual approach of the one stated above, in which one maintains a set of "multiplicative weights" or "dual variables" $y \in \mathbb{R}^n$ (one for each constraint of $K$, i.e., row of $A$). The dual roughly tells us how "important" a constraint is (e.g., if $y_3 = 100$ and $y_7 = 1$, it would mean that constraint 3 gets violated much more often and more egregiously than constraint 7). Initially, $y \gets [1, 1, \ldots, 1]$ and then for each $h$ we multiplicatively update $y$ with a value proportional to the violation $Ah$ via the formula $$y_i \gets y_i \cdot \exp\left(\beta (A h)_{i} \right)$$ for $i \in [n]$. This multiplicative reweighting of the constraint importance is the reason behind the method's name. The "linearize+solve" steps now correspond to solving $\min_{h \in K} \inner{y, A h} = \min_{h \in K} \inner{A^T y, h}$. Iteratively performing this procedure yields the same dynamics as the one described in the pseudocode above.
 
 Pattern-matching $\inner{A^T y, h}$ with $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h }$ one can, correctly, presume that the connection between the methods is that $y = \nabla \smax_{\beta}(A x_{t-1})$. This is indeed the case (up to a factor of proportionality that can be ignored), $\nabla \smax(A x_{t-1})$ is a probability distribution proportional to $\exp(\beta A(h_1 + \ldots + h_{t+1}))$ (see property 2 of $\smax$ Fact); $y$ can be easily deduced to have the same value.

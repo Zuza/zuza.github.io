@@ -78,15 +78,23 @@ $$\to$$
 </div>
 <div class="cell">
 $$\begin{align}
-\text{min. }\ & \inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h_t } \\
+\text{min. }\ & \inner{ \nabla \smax_{\beta}(A x_{t-1}), A h_t } \\
 \text{s.t. }\ & h_t \in K
 \end{align}$$
 </div>
 </div>
 
-In the maxflow problem, the parameter $\beta$ is chosen to be approximately $\eps$. Let's elaborate on the objective of the last problem. Let $\Phi(x) := \smax_{\beta}(Ax)$ be the objective of the smoothened (middle) problem. Then $\inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h_t }$ is exactly the linearization of $\Phi(x)$ around $x_{t-1}$. This is because $\Phi(x_{t-1} + h_t) - \Phi(x_{t-1})$ is approximately $\inner{\nabla \Phi(x_{t-1}), h_t }$ and $\nabla \Phi(x_{t-1}) = A^T \nabla \smax_{\beta}(A x_{t-1})$ by chain rule.
+In the maxflow problem, the parameter $\beta$ is chosen to be approximately $\eps$. Let's elaborate on the objective of the last problem. Intuitively, we relax our original goal of minimizing $\max(Ax)$ with minimizing $\inner{p, Ax}$ for some probability distribution $p$. Clearly, the latter problem is connected to the middle one (see below), but it is significantly easier: it is linear and relaxes the original problem as any solution to the original is also a solution of equal quality of the latter one.
 
-We can now present the full multiplicative weights algorithm. We repeat the linearize-solve-update loop for a total of $T$ rounds (to be specified later). Solving the linearized problem is done via some black-box method (called the **oracle**) that needs to be supplied to the algorithm upfront. Precisely, the oracle is supplied a vector $p \in \mathbb{R}^n$ and needs to return $\arg\min_{x \in K} \inner{ p, x }$. Luckily, the linearized problem is often much simpler than the original one and can be easily optimized.
+Formally, let $\Phi(x) := \smax_{\beta}(Ax)$ be the objective of the smoothened (middle) problem. Then $\inner{ \nabla \smax_{\beta}(A x_{t-1}), A h_t }$ is exactly the linearization of $\Phi(x)$ around $x_{t-1}$. This is because
+
+$$\begin{align}
+\Phi(x_{t-1} + h_t) - \Phi(x_{t-1}) & \approx \inner{\nabla \Phi(x_{t-1}), h_t } \\
+& = \inner{ A^T \nabla \smax_{\beta}(A x_{t-1}), h_t} \\
+& = \inner{ \nabla \smax_{\beta}(A x_{t-1}), A h_t}.
+\end{align}$$
+
+We can now present the full multiplicative weights algorithm. We repeat the linearize-solve-update loop for a total of $T$ rounds (to be specified later). Solving the linearized problem is done via some black-box method (called the **oracle**) that needs to be supplied to the algorithm upfront. Precisely, the oracle is supplied a probability distribution $p \in \mathbb{R}^n$ and needs to return $\arg\min_{x \in K} \inner{ p, A x }$. Luckily, the linearized problem is often much simpler than the original one and can be easily optimized.
 
 How to choose the number of rounds $T$? It will mostly depend on two important parameters: the accuracy $\eps$ we require from the final solution, and a new parameter $\rho$ that we call the **width of the oracle**. The only requirement on the width is that $\rho \ge 1$ must be larger than $$\dnorm{Ax}_\infty$$ for any $x$ that can be returned by the oracle (e.g., $\max_{x \in K} \dnorm{Ax}_\infty$ suffices, but sometimes we can implement the oracle that achieves a better bound).
 
@@ -95,7 +103,7 @@ How to choose the number of rounds $T$? It will mostly depend on two important p
 * Input: matrix $A \in \mathbb{R}^{n \times m}$, oracle for the linearized problem, width $\rho$, accuracy $\eps$.
 * Define $$\beta := \frac{\eps}{2 \rho^2}$$, $x_0 := 0$, $\Phi(x) := \smax_{\beta}(Ax)$, $$T := \frac{\ln n}{\beta \cdot \eps} = O(\eps^{-2} \rho^2 \ln n)$$.
 * For $t = 1 \ldots T$
-  * $$h_t := \arg \min_{h \in K} \inner{ \nabla \Phi(x_{t-1}), h }$$ via the oracle
+  * $$h_t := \arg \min_{h \in K} \inner{\nabla \smax_{\beta}(A x_{t-1}), A h }$$ via the oracle
   * $x_t := x_{t-1} + h_t \qquad$ (equivalent: $x_t = \sum_{i=1}^t h_i$)
 * Output $(1/T) \cdot x_T$
 </div>
@@ -105,7 +113,7 @@ How to choose the number of rounds $T$? It will mostly depend on two important p
 <summary><b>Example</b>: Multiplicative weights for maximum flow. <span class="summary-link">(click to expand)</span></summary>
 Suppose we want to solve maxflow between $s$ and $t$ with $\eps$ additive error. We assume for simplicity that the graph is directed and uncapacitated which allows us to set $\rho = 1$. Set $\beta$ and $T$ accordingly. Let $\OPT$ be the optimal value of the problem when cast in the aforementioned standard form (e.g., $OPT = 1/F$ if the $F$ is the number of edge-disjoint paths between $s$ and $t$; note that we need to set $\eps < 1/F$ to get a good approximation).
 
-Initialize a "congestion" vector $x := [0, 0, \ldots, 0] \in \mathbb{R}^{\vert E \vert}$ that remembers for each edge how many times has it been used. We repeat the following for $T$ rounds: for each directed edge $e$ we compute a cost $c_e := \exp(\beta x_i) > 0$. Normalize this vector of costs by dividing all entries by $$Z := \sum_{e \in E} \exp(\beta x_i)$$ that makes their sum equal to $1$ (note: this is unnecessary, but we do it to stay true to the algorithm). Find the shortest path $P$ between $s$ and $t$ with respect to the edge costs $c$ (e.g., with a Dijkstra). Update $x$ by incrementing $x_e$ for each edge $e$ that was used in the shortest path $P$.
+Initialize a "congestion" vector $x := [0, 0, \ldots, 0] \in \mathbb{R}^{\vert E \vert}$ that remembers for each edge how many times has it been used. We repeat the following for $T$ rounds: for each directed edge $e$ we compute a cost $c_e := \exp(\beta x_i) > 0$. Normalize this vector of costs $c$ by dividing all entries by $$Z := \sum_{e \in E} \exp(\beta x_i)$$ that makes their sum equal to $1$ (note: this is unnecessary, but we do it to stay true to the algorithm). This vector $c$ is exactly equal to $\nabla \smax_{\beta}(Ax)$. Find the shortest path $P$ between $s$ and $t$ with respect to the edge costs $c$ (e.g., with a Dijkstra). Update $x$ by incrementing $x_e$ for each edge $e$ that was used in the shortest path $P$.
 
 After the above loop terminates, the collection of all shortest paths found throughout the algorithm provide us with $T$ paths that incur congestion of at most $T \cdot (OPT + \eps)$. Scaling by $1/T$, we find a unit-flow that incurs congestion $OPT + \eps$ and we are done.
 </details>
@@ -126,7 +134,7 @@ We now prove that the above algorithm works.
 <div markdown="1" class="proof">
 **Proof:** It is sufficient to show $\max(A x_T) \le T \cdot (OPT + \eps)$ since it is equivalent to $\max(A \tilde{x}) = \max(A x_T/T) \le OPT + \eps$, by scaling. Furthermore, note that solving the smoothened version of the problem $\Phi(x) = \smax_{\beta}(Ax)$ is "harder" than solving the original one since $\Phi(x) \ge \max(A x)$ by property 1 of Fact (smooth max). Therefore, it is sufficient to show $\Phi(x_T) \le T \cdot (OPT + \eps)$. Also, note that $x_T/T = \sum_{t=1}^T \frac{1}{T} h_t \in K$ since $K$ is convex and $h_t \in K$.
 
-We track the evolution of $\Phi(x_t) = \Phi(h_1 + h_2 + \ldots + h_t)$ by arguing about the increase $\Phi(x_{t-1} + h_t) - \Phi(x_{t-1})$ in each round. Up to first order terms, the increase is exactly $\inner{\nabla \Phi(x_{t-1}), h_t}$, the linearized problem we are optimizing. We argue that this (approximate) increase is small, $\inner{\nabla \Phi(x_{t-1}), h_t} \le \OPT$. However, this is immediate because the linearized problem is a "relaxation" of the original problem. Let $x_{\ast} \in K$, $\max(A x_{\ast}) = \OPT$ be the optimal solution. By definition of $\Phi$ we have that $$\inner{\nabla \Phi(x_{t-1}), h_t} = \inner{\nabla \smax(x_{t-1}), A h_t}$$ where $\nabla \smax(\cdot)$ is some probability distribution. It is easy to see that $$\inner{p, A x_{\ast}} \le \OPT$$ for any probability distribution $p$, hence the oracle will always return a value not larger than $\OPT$.
+We track the evolution of $\Phi(x_t) = \Phi(h_1 + h_2 + \ldots + h_t)$ by arguing about the increase $\Phi(x_{t-1} + h_t) - \Phi(x_{t-1})$ in each round. Up to first order terms, the increase is exactly $\inner{\nabla \smax(x_{t-1}, A h_t)} = \inner{\nabla \Phi(x_{t-1}), h_t}$, the linearized problem we are optimizing. We argue that this (approximate) increase is small, $\inner{\nabla \Phi(x_{t-1}), h_t} \le \OPT$. However, this is immediate because the linearized problem is a "relaxation" of the original problem. Let $x_{\ast} \in K$, $\max(A x_{\ast}) = \OPT$ be the optimal solution. It is easy to see that $$\inner{p, A x_{\ast}} \le \OPT$$ for any probability distribution $p$ (we use $p = \nabla \smax_{\beta}(A x_{t-1})$), hence the oracle will always return a value not larger than $\OPT$.
 
 We argued that the first-order increase in $\Phi$ is $\inner{\nabla \Phi(x_{t-1}), h_t} \le \OPT$. In reality, we have to account for higher-order errors via property 3 of Fact (smooth max). 
 

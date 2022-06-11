@@ -151,7 +151,9 @@ Straighforward algebra with $T = \frac{\ln n}{\beta \cdot \eps}$ gives us that t
 <br/>
 
 A few final points:
+* For a full proof please see the appendix of [Zuz].
 * One can often get a better dependence on $\rho$ for special problems. E.g., one can get a linear instead of quadratic dependence of $\rho$ for positive packing and positive covering problems such as maxflow. See [AHZ] for details.
+* Thanks to Thatchaphol Saranurak for pointing out one can also rederive the online experts algorithm using the analysis.
 * It would be interesting to rederive matrix multiplicative weights using an analogue of the above analysis.
 <!-- * Computational aspects (assuming non-negative entries in $A$, constant $\eps$, constant $\rho$). The algorithm is numerically stable. Examining the algorithm, the only part that might need elaboration is the computation of $\nabla \Phi(x_{t-1})$ since its direct computation involves exponentiation. We argue this exponentiation does not give raise to numerical issues. -->
 <!--   <center>$$\nabla \Phi(x_{t-1}) = A^T \nabla \smax_\beta(A x_{t-1})$$</center> -->
@@ -162,6 +164,7 @@ A few final points:
 
 References:
 * [AHK] Arora, Hazan, Kale: *The Multiplicative Weights Update Method: A Meta-Algorithm and Applications*
+* [Zuz] <a href="https://arxiv.org/abs/2110.11723">Zuzic: A Simple Boosting Framework for Transshipment</a>
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({

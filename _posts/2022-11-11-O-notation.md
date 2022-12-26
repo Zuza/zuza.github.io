@@ -16,6 +16,8 @@ permalink: okbquvkrklilvtrvcatgixthgzayqjld
 
 *Note:* This article is NOT a primer. If needed, please see a good introduction [here](https://simple.wikipedia.org/wiki/Big_O_notation) or [here](https://en.wikipedia.org/wiki/Big_O_notation).
 
+# Introduction
+
 Computer science adopted the Big-O notation from number theory, where it was pioneered by Bachman and Landau in the 1900s. We review the standard definition.
 <div markdown="1" class="theorem">
 **The Bachman-Landau definition:** Given functions \\( f, g : \\{1, 2, \ldots\\} \to \mathbb{R} \\) we write \\( f(n) = O( g(n) ) \\) when there exist \\( C > 0, n_0 > 0 \\) such that \\( \vert f(n) \vert \le C \cdot g(n) \\) for all \\( n \ge n_0 \\).
@@ -33,18 +35,18 @@ The success of Big-O has led to its ubiquity throughout computer science. Howeve
 **Fact:** The breadth-first search takes $O(|V| + |E|)$ time on a graph $G = (V, E)$.
 </div>
 
-**Issue:** what exactly is the infinite process \\(n \in \\{ 1, 2, \ldots \\}\\) here? The implied process is "for every infinite sequence of graphs", but this is a extremely unwieldy and does not correspond to the intuition that computer scientists want to convey.
+**Issue:** what exactly is the infinite process \\(n \in \\{ 1, 2, \ldots \\}\\) here? The implied process is "for every infinite sequence of graphs", but this is extremely unwieldy and does not correspond to the intuition that computer scientists want to convey.
 The right interpretation is that there exists a constant $C > 0$ (that depends on the underlying RAM model) such that the breath-first search completes in at most $C \cdot (|V| + |E|)$ time.
 
 ### Failure mode 2: no Big-O lower bounds
 
 <div markdown="1" class="theorem">
-**Fact:** There exists a constant $C > 0$ such that randomly sampling at least $C \cdot \sqrt{n}$ elements from a universe of size $n$ will ensure a collision (we draw the same element twice) with probability at least 99%.
+**Fact:** There exists a constant $C > 0$ such that [IID](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) sampling of at least $C \cdot \sqrt{n}$ elements from a universe of size $n$ will ensure a collision (drawing of the same element twice) with probability at least 99%.
 </div>
 
-Replacing the first part with *"Randomly sampling at least $O(\sqrt{n})$ elements ..."* will often land you in hot water with reviewers because Bachman-Landau does not allow for expressing lower bounds as $O(\ldots)$. Writing *"Randomly sampling at least $\Omega(\sqrt{n})$ elements ..."* is plain wrong. The only unimpeachable way to use Big-O in this context would be to write something impractical like:
+Replacing the first part with *"IID sampling of at least $O(\sqrt{n})$ elements ..."* will often land you in hot water with reviewers because Bachman-Landau does not allow for expressing lower bounds as $O(\ldots)$. Writing *"IID sampling of at least $\Omega(\sqrt{n})$ elements ..."* is plain wrong. The only unimpeachable way to use Big-O in this context would be to write something impractical like:
 <div markdown="1" class="theorem">
-**Fact:** Let $f(n)$ be the smallest integer such that randomly sampling at least $f(n)$ elements from a universe of size $n$ will ensure a collision with probability at least 99%. Then $f(n) = O(\sqrt{n})$.
+**Fact:** Let $f(n)$ be the smallest integer such that IID sampling of at least $f(n)$ elements from a universe of size $n$ will ensure a collision with probability at least 99%. Then $f(n) = O(\sqrt{n})$.
 </div>
 I believe this is suboptimal.
 

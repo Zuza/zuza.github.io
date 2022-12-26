@@ -147,7 +147,7 @@ Big-O constants often need to depend on other parameters. For example: $O_{\eps}
 
 ### Example: Undergraduate real analysis
 
-One can slightly rephrase the the standard $\eps-\delta$ definitions thought in introductory real analysis classes.
+One can co-opt the new definition to rephrase the the standard $\eps-\delta$ definitions from introductory real analysis classes. Such usage, while formally correct, deviates from the customary usages of Big-O.
 
 <div markdown="1" class="theorem">
 **Definition**: A sequence $a_n$ tends to 0 when for all $\eps > 0$ it holds that $\vert a_n \vert < \eps$ for all $n > O_{\eps}(1)$.

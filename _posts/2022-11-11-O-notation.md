@@ -178,7 +178,7 @@ An alternative formalization of Big-O would be to define $O(f(n))$ as a set of f
 \\[ O(f(n)) := \\{ g : \\{ 1, 2, \ldots \\} \to \mathbb{R} \mid \exists C > 0, n_0, \text{ such that } \vert g(n) \vert \le C \cdot f(n)\ \forall n \ge n_0 \\} \\]
 
 Then, one can define $\Omega$ analogously. Binary operations between sets are defined like \\( A + B := \\{ n 
-a(n)+b(n) \mid a(n) \in A, b(n) \in B\\} \\) (other operations are analogous). Unary operations are defined like \\( \exp(A) := \\{ n \mapsto \exp(a(n)) \mid a(n) \in A \\} \\).
+\mapsto a(n)+b(n) \mid a(n) \in A, b(n) \in B\\} \\) (other operations are analogous). Unary operations are defined like \\( \exp(A) := \\{ n \mapsto \exp(a(n)) \mid a(n) \in A \\} \\).
 
 **Pros:** Such definition would be more in line with the standard Bachman-Landau convention (as compared to this proposal).
 

@@ -25,9 +25,9 @@ Computer science adopted the Big-O notation from number theory, where it was pio
 
 Big-O turned out to be one of the most influential driving forces of algorithm design. Researchers using Big-O were implicitly guided to focus on the big picture: ignore constants and lower-order terms, and only focus on asymptotics (as any finite-value behavior is cropped off).
 
-The success of Big-O has led to its ubiquity throughout computer science. However, the Bachman-Landau definition is impractical and inflexible for modern research. In response, its usage is increasingly informal, colloqiual, and non-mathematical. I propose a slight change in definition to help address the failure modes of Bachman-Landau. I will propose the new convention for Big-O, discuss its various aspects and provide examples to illustrate them.
+The success of Big-O has led to its ubiquity throughout computer science. However, the Bachman-Landau definition is impractical and inflexible for modern research. In response, its usage is increasingly informal, colloqiual, and non-mathematical. I propose a slight change in definition to help address the failure modes of Bachman-Landau. I will propose a new convention for Big-O, discuss its various aspects and provide illustrative examples.
 
-*Note:* These ideas are certainly not original. However, I have not seen them being explicitly written down.
+*Note:* These ideas are certainly not original. However, I have not seen them being explicitly argued anywhere.
 
 ### Failure mode 1: unnecessary infinite process
 
@@ -67,7 +67,7 @@ where $P(O \gets C)$ denotes $P$ with the Big-O being replaced by $C$. For examp
 **Fact**: For all $n \in \mathbb{N}$ it holds that \\( n! \le O(n^{n + 1/2} e^{-n}) \\).
 </div>
 
-Note that the relation operator is $\le$, and replacing it with the customary $=$ would be incorrect under our definition. This is a (minor) point of divergence that I believe is necessary for mathematial precision.
+Note that the relation operator is "$\le$", and replacing it with the customary "$=$" would be incorrect under our definition. The latter was always an abuse of notation. This is a (minor) point of divergence that I believe is necessary for mathematial precision.
 
 We could have also used weaker approximations \\( n! \le n^{n+O(1)} e^{-n} \\) or \\( n! \le \exp( O(n \log n) ) \\) (both when $n \ge 2$), which are now also perfectly formal. Unfortunately, using such approximations in a formal publication will often agitate the reviewers.
 
@@ -178,7 +178,7 @@ An alternative formalization of Big-O would be to define $O(f(n))$ as a set of f
 \\[ O(f(n)) := \\{ g : \\{ 1, 2, \ldots \\} \to \mathbb{R} \mid \exists C > 0, n_0, \text{ such that } \vert g(n) \vert \le C \cdot f(n)\ \forall n \ge n_0 \\} \\]
 
 Then, one can define $\Omega$ analogously. Binary operations between sets are defined like \\( A + B := \\{ n 
-mapsto a(n)+b(n) \mid a(n) \in A, b(n) \in B\\} \\) (other operations are analogous). Unary operations are defined like \\( \exp(A) := \\{ n \mapsto \exp(a(n)) \mid a(n) \in A \\} \\).
+a(n)+b(n) \mid a(n) \in A, b(n) \in B\\} \\) (other operations are analogous). Unary operations are defined like \\( \exp(A) := \\{ n \mapsto \exp(a(n)) \mid a(n) \in A \\} \\).
 
 **Pros:** Such definition would be more in line with the standard Bachman-Landau convention (as compared to this proposal).
 

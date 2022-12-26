@@ -128,7 +128,7 @@ Pattern-matching $\inner{A^T y, h}$ with $\inner{ A^T \nabla \smax_{\beta}(A x_{
 
 We now prove that the above algorithm works.
 <div markdown="1" class="theorem">
-**Theroem**: Let $\OPT$ be the value of the optimal solution and $\tilde{x} := x_T/T$ be the output of the multiplicative weights algorithm. Then $\tilde{x} \in K$ and $\max(A \tilde{x}) \le OPT + \eps$.
+**Theorem**: Let $\OPT$ be the value of the optimal solution and $\tilde{x} := x_T/T$ be the output of the multiplicative weights algorithm. Then $\tilde{x} \in K$ and $\max(A \tilde{x}) \le OPT + \eps$.
 </div>
 
 <div markdown="1" class="proof">

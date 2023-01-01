@@ -1,4 +1,4 @@
----
+    ---
 layout: post
 title: A Better Big-O Notation
 hidden: true
@@ -50,10 +50,28 @@ Replacing the first part with *"IID sampling of at least $O(\sqrt{n})$ elements 
 </div>
 I believe this is suboptimal.
 
-### Failure mode 3: colloqiual usage and lack of formality
+### Faillure mode 3: Bachman-Landau works only for conclusions
 
-@@@ TODO
+Using Big-O in premises (rather than conclusions) often leads to issues. Consider the following quote ([source](https://dl.acm.org/doi/10.1145/3086465)). What exactly does it mean?
 
+[comment]: <div markdown="1" class="theorem">
+![A fundamental result by Karger [10] states that for any λ-edge-connected graph with n nodes, independently sampling each edge with probability p = Ω(log (n)/λ) results in a graph that has edge connectivity Ω(λp), with high probability.](/assets/talg-karger-omega.png){:height="50px"}
+
+The most natural interpretation: "Given any infinite family, sampling with any \\( p(n) = \Omega(\log n / \lambda) \\) yields connectivity \\( \Omega(\lambda p) \\)" is wrong, as choosing \\( p(n) = 0.01 \ln(n) / \lambda \\) can result in a disconnected graph with probability tending to \\( 1 \\) (e.g., consider a path where consecutive vertices are connected with \\( \lambda \\) parallel edges). The constant replacing the first $\Omega$ must be sufficiently large.
+
+In a similar manner, it is customary to use Big-O in algorithms. Consider this excerpt:
+
+![T = O(p κ1 κ2 κ3 log κ/ε); for t = 0 to T do; ...](/assets/kyng-algorithm.png){:height="60px" width="400px"}
+
+([Source](https://arxiv.org/pdf/2102.06977.pdf)) The statement $T = O(\ldots)$ would formally assert that setting $T \gets 1$ is valid, but the algorithm fails in this case.
+
+### Failure mode 4: colloqiual usage and lack of formality
+
+On its face, Bachman-Landau does not explicitly define the meaning of statements like \\( O(n) + O(n) = O(n) \\), \\( n^{O(1)} \\), or \\( \exp(-\Omega(n)) \\). As such, researchers attach their own semantics to these. These vary in formality and mean different things to different authors.
+
+At the same time, Big-O is proliferating to the point where many papers never explicitly specify any constants. In an extreme limit, this might lead to a world where papers are written exclusively with Big-Os (due to its inherent practicality), while its usage has became informal, unspecified folklore, and uncoordinated between subareas. In such a world, only domain experts would be able to infer the correct semantics of formal statements, introducing unnecessary barriers to interdisciplinarity in science.
+
+On a positive note, such a scenario is easily avoidable: we put forward several proposals how to formalize Big-Os (like this manuscript!), and papers specify which proposal they follow.
 
 # A Better Definition: A Sufficiently-Large Constant
 
@@ -184,9 +202,13 @@ Then, one can define $\Omega$ analogously. Binary operations between sets are de
 
 **Equal:** Same as in this proposal, statements like \\( O(n) + O(n) = O(n) \\), \\( n^{O(1)} \\), or \\( \exp(-\Omega(n)) \\) are well defined.
 
-**Cons:** Most importantly, failure modes 1 and 2 remain. Furthermore, it is unclear how to specify the ordering of quantifiers without redoing much of the work of the current proposal. Furthermore, the definition involves custom set operations, which are arguably non-intuitive for anyone not accustomed to Bachman-Landau.
+**Cons:** Most importantly, failure modes 1, 2, and 3 remain. Furthermore, it is unclear how to specify the ordering of quantifiers without redoing much of the work of the current proposal. Furthermore, the definition involves custom set operations, which are arguably non-intuitive for anyone not accustomed to Bachman-Landau.
 
-I believe that the cons outweight the pros.
+I believe that the cons of this approach outweight the pros.
+
+<!-- # Other aspects -->
+
+<!-- - The Little-o and Little-Omega are attached to an infinite process that needs to be specified or clear from context.  -->
 
 <!-- # Other symbols -->
 

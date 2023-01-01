@@ -35,7 +35,7 @@ The success of Big-O has led to its ubiquity throughout computer science. Howeve
 </div>
 
 **Issue:** what exactly is the infinite process \\(n \in \\{ 1, 2, \ldots \\}\\) here? The implied process is "for every infinite sequence of graphs", but this is extremely unwieldy and does not correspond to the intuition that computer scientists want to convey.
-The right interpretation is that there exists a constant $C > 0$ (that depends on the underlying RAM model) such that the breath-first search completes in at most $C \cdot (|V| + |E|)$ time.
+The right interpretation is that there exists a constant $C > 0$ (that depends on the underlying RAM model) such that the breath-first search (BFS) completes in at most $C \cdot (|V| + |E|)$ time.
 
 ### Failure mode 2: no Big-O lower bounds
 
@@ -74,9 +74,15 @@ On a positive note, such a scenario is easily avoidable: we put forward several 
 
 # A Better Definition: A Sufficiently-Large Constant
 
-I propose to change the standard meaning of the Big-O. An expression $P$ using a single Big-O should be interpreted as
+I propose to change the standard meaning of the Big-O. An expression $P$ using a single Big-O should be interpreted by replacing the $O$ with a sufficiently large constant and evaluating the expression. Specifically:
 \\[ \exists C_0 > 0 \quad \forall C > C_0 \quad P(O \gets C), \\]
-where $P(O \gets C)$ denotes $P$ with the Big-O being replaced by $C$. For example, if \\( P = O(|V| + |E|) \\), then \\( P(O \gets 10) = 10(|V| + |E|) \\). We assume this notation in the rest of the article.
+where $P(O \gets C)$ denotes $P$ with the Big-O being replaced by $C$. For example, if
+\\[ P = \text{"BFS completes in at most } O(|V| + |E|) \text{ time."} \\]
+Then,
+\\[ P(O \gets 7) = \text{"BFS completes in at most } 7(|V| + |E|) \text{ time."} \\]
+This statement $P$ is correct as, indeed, (in whichever RAM model) there always exists a sufficiently large constant $C_0 > 0$ such that the statement is true for $C > C_0$. We assume this notation in the rest of the article.
+
+**Why not only "\\( \exists C_0 > 0\ \ P(O \gets C_0) \\)"**? I believe this would be disconnected with current usage. For example, correct statements would include "\\(O(1) \le 5\\)" (choose $O \gets 4$), or even "An algorithm with runtime $n^{O(1)}$ is linear." (choose $O \gets 1$).
 
 ### Example: Stirling's approximation
 
@@ -123,7 +129,7 @@ Consider another striking example of the highlighting power of Big-O. Suppose \\
 
 **Aspect:** When the deviation is large, the concentration acts like a Poisson variable. This shows, for example, that randomly throwing $n$ balls into $n$ bins will leave the most congested bin with at most $O(\frac{\log n}{\log \log n})$ balls.
 <div markdown="1" class="theorem">
-**Fact**: \\( \Pr[X > \beta \mu] < \exp(- \Omega (\beta \ln \beta) \mu) . \\)
+**Fact**: \\( \Pr[X > \beta \mu] < \exp(- \Omega (\beta \ln \beta) \cdot \mu) . \\)
 </div>
 
 # Ordering of Quantifiers: Expressions with Multiple Big-Os
@@ -199,15 +205,17 @@ Then, one can define $\Omega$ analogously. Binary operations between sets are de
 
 **Pros:** Such definition would be more in line with the standard Bachman-Landau convention (as compared to this proposal).
 
-**Equal:** Same as in this proposal, statements like \\( O(n) + O(n) = O(n) \\), \\( n^{O(1)} \\), or \\( \exp(-\Omega(n)) \\) are well defined.
+**Equal:** Same as in this proposal, statements like \\( O(n) + O(n) = O(n) \\), \\( n^{O(1)} \\), or \\( \exp(-\Omega(n)) \\) are well defined. Issues involving dependence and ordering of quantifiers remain, but can be resolved in similar ways to this proposal.
 
-**Cons:** Most importantly, failure modes 1, 2, and 3 remain. Furthermore, it is unclear how to specify the ordering of quantifiers without redoing much of the work of the current proposal. Furthermore, the definition involves custom set operations, which are arguably non-intuitive for anyone not accustomed to Bachman-Landau.
+**Cons:** Most importantly, failure modes 1, 2, and 3 remain. Furthermore, the definition involves custom set operations, which are arguably non-intuitive for anyone not accustomed to Bachman-Landau.
 
 I believe that the cons of this approach outweight the pros.
 
-<!-- # Other aspects -->
+# Other aspects
 
-<!-- - The Little-o and Little-Omega are attached to an infinite process that needs to be specified or clear from context.  -->
+- **How to interpret Big-Theta?** An expression $P$ containing $\Theta(x)$ is correct if we can replace "$\Theta(x)$" with "at most $O(x)$" and "at least $\Omega(x)$" with the expression holding (both must hold). For example, the statement "The optimal comparison-based sorting algorithm completes in $\Theta(n \log n)$ rounds." is correct.
+
+- **How to interpret Little-o and Little-omega?** The Little-o and Little-Omega are attached to an infinite process that needs to be specified or clear from context. A statement containing (a single) little-o is correct if we can replace it with some (adversarially chosen) sequence $(a_n)_n$ that tends to $0$. For example, Little-omega is analogous, except the sequence must tend to $\infty$.
 
 <!-- # Other symbols -->
 
@@ -221,7 +229,7 @@ I believe that the cons of this approach outweight the pros.
 <!-- omega ... tends to infinity ... there exists a sequence that tends to infinity such that -->
 
 ## Acknowledgement
-I would like to thank Bernhard Haeupler for spurring my thoughts about this topic.
+I would like to thank Bernhard Haeupler for spurring my thoughts about this topic. Furthermore, I thank Roie Levin for reading the drafts and giving insightful comments.
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({

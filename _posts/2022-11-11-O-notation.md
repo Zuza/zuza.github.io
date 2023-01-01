@@ -1,4 +1,4 @@
----
+--
 layout: post
 title: A Better Big-O Notation
 hidden: true
@@ -24,9 +24,9 @@ Computer science adopted the Big-O notation from number theory, where it was pio
 
 Big-O turned out to be one of the most influential driving forces of algorithm design. Researchers using Big-O were implicitly guided to focus on the big picture: ignore constants and lower-order terms, and only focus on asymptotics (as any finite-value behavior is cropped off).
 
-The success of Big-O has led to its ubiquity throughout computer science. However, the Bachman-Landau definition is impractical and inflexible for modern research. In response, its usage is increasingly informal, colloqiual, and non-mathematical. I propose a slight change in definition to help address the failure modes of Bachman-Landau. I will propose a new convention for Big-O, discuss its various aspects and provide illustrative examples.
+The success of Big-O has led to its ubiquity throughout computer science. However, the Bachman-Landau definition is impractical and inflexible for modern research. In response, its usage is increasingly informal, colloquial, and non-mathematical. I propose a slight change in definition to help address the failure modes of Bachman-Landau. I will propose a new convention for Big-O, discuss its various aspects and provide illustrative examples.
 
-*Note:* These ideas are certainly not original. However, I have not seen them being explicitly argued anywhere.
+*Note:* These ideas are certainly not original. However, I have not seen them being explicitly argued anywhere. My aim is to give a formal foundation aligned with current research usage.
 
 ### Failure mode 1: unnecessary infinite process
 
@@ -40,7 +40,7 @@ The right interpretation is that there exists a constant $C > 0$ (that depends o
 ### Failure mode 2: no Big-O lower bounds
 
 <div markdown="1" class="theorem">
-**Fact:** There exists a constant $C > 0$ such that [IID](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) sampling of at least $C \cdot \sqrt{n}$ elements from a universe of size $n$ will ensure a collision (drawing of the same element twice) with probability at least 99%.
+**Fact:** There exists a constant $C > 0$ such that [IID](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) sampling of at least $C \cdot \sqrt{n}$ elements from a universe of size $n$ will ensure a collision (drawing of the same element twice) with probability of at least 99%.
 </div>
 
 Replacing the first part with *"IID sampling of at least $O(\sqrt{n})$ elements ..."* will often land you in hot water with reviewers because Bachman-Landau does not allow for expressing lower bounds as $O(\ldots)$. Writing *"IID sampling of at least $\Omega(\sqrt{n})$ elements ..."* is plain wrong. The only unimpeachable way to use Big-O in this context would be to write something impractical like:
@@ -49,7 +49,7 @@ Replacing the first part with *"IID sampling of at least $O(\sqrt{n})$ elements 
 </div>
 I believe this is suboptimal.
 
-### Faillure mode 3: Bachman-Landau works only for conclusions
+### Failure mode 3: Bachman-Landau works only for conclusions
 
 Using Big-O in premises (rather than conclusions) often leads to issues. Consider the following quote ([source](https://dl.acm.org/doi/10.1145/3086465)). What exactly does it mean?
 
@@ -58,19 +58,19 @@ Using Big-O in premises (rather than conclusions) often leads to issues. Conside
 
 The most natural interpretation: "Given any infinite family, sampling with any \\( p(n) = \Omega(\log n / \lambda) \\) yields connectivity \\( \Omega(\lambda p) \\)" is wrong, as choosing \\( p(n) = 0.01 \ln(n) / \lambda \\) can result in a disconnected graph with probability tending to \\( 1 \\) (e.g., consider a path where consecutive vertices are connected with \\( \lambda \\) parallel edges). The constant replacing the first $\Omega$ must be sufficiently large.
 
-In a similar manner, it is customary to use Big-O in algorithms. Consider this excerpt:
+Similarly, it is customary to use Big-O in algorithms. Consider this excerpt:
 
 ![T = O(p κ1 κ2 κ3 log κ/ε); for t = 0 to T do; ...](/assets/kyng-algorithm.png){:height="60px" width="400px"}
 
 ([Source](https://arxiv.org/pdf/2102.06977.pdf)) The statement $T = O(\ldots)$ would formally assert that setting $T \gets 1$ is valid, but the algorithm fails in this case.
 
-### Failure mode 4: colloqiual usage and lack of formality
+### Failure mode 4: colloquial usage and lack of formality
 
 On its face, Bachman-Landau does not explicitly define the meaning of statements like \\( O(n) + O(n) = O(n) \\), \\( n^{O(1)} \\), or \\( \exp(-\Omega(n)) \\). As such, researchers attach their own semantics to these. These vary in formality and mean different things to different authors.
 
-At the same time, Big-O is proliferating to the point where many papers never explicitly specify any constants. In an extreme limit, this might lead to a world where papers are written exclusively with Big-Os (due to its inherent practicality), while its usage has became informal, unspecified folklore, and uncoordinated between subareas. In such a world, only domain experts would be able to infer the correct semantics of formal statements, introducing unnecessary barriers to interdisciplinarity in science.
+At the same time, Big-O is proliferating to the point where many papers never explicitly specify any constants. In an extreme limit, this might lead to a world where papers are written exclusively with Big-Os (due to their inherent practicality), while its usage has become informal, unspecified folklore, and uncoordinated between subareas. In such a world, only domain experts would be able to infer the correct semantics of formal statements, introducing unnecessary barriers to interdisciplinarity in science.
 
-On a positive note, such a scenario is easily avoidable: we put forward several proposals how to formalize Big-Os (like this manuscript!), and papers specify which proposal they follow.
+On a positive note, such a scenario is easily avoidable: we put forward several proposals on how to formalize Big-Os (like this manuscript!), and papers specify which proposal they follow.
 
 # A Better Definition: A Sufficiently-Large Constant
 
@@ -82,7 +82,7 @@ Then,
 \\[ P(O \gets 7) = \text{"BFS completes in at most } 7(|V| + |E|) \text{ time."} \\]
 This statement $P$ is correct as, indeed, (in whichever RAM model) there always exists a sufficiently large constant $C_0 > 0$ such that the statement is true for $C > C_0$. We assume this notation in the rest of the article.
 
-**Why not only "\\( \exists C_0 > 0\ \ P(O \gets C_0) \\)"**? I believe this would be disconnected with current usage. For example, correct statements would include "\\(O(1) \le 5\\)" (choose $O \gets 4$), or even "An algorithm with runtime $n^{O(1)}$ is linear." (choose $O \gets 1$).
+**Why not only "\\( \exists C_0 > 0\ \ P(O \gets C_0) \\)"**? I believe this would be disconnected from current usage. For example, correct statements would include "\\(O(1) \le 5\\)" (choose $O \gets 4$), or even "An algorithm with runtime $n^{O(1)}$ is linear." (choose $O \gets 1$).
 
 ### Example: Stirling's approximation
 
@@ -90,7 +90,7 @@ This statement $P$ is correct as, indeed, (in whichever RAM model) there always 
 **Fact**: For all $n \in \mathbb{N}$ it holds that \\( n! \le O(n^{n + 1/2} e^{-n}) \\).
 </div>
 
-Note that the relation operator is "$\le$", and replacing it with the customary "$=$" would be incorrect under our definition. The latter was always an abuse of notation. This is a (minor) point of divergence that I believe is necessary for mathematial precision.
+Note that the relation operator is "$\le$", and replacing it with the customary "$=$" would be incorrect under our definition. The latter was always an abuse of notation. This is a (minor) point of divergence that I believe is necessary for mathematical precision.
 
 We could have also used weaker approximations \\( n! \le n^{n+O(1)} e^{-n} \\) or \\( n! \le \exp( O(n \log n) ) \\) (both when $n \ge 2$), which are now also perfectly formal. Unfortunately, using such approximations in a formal publication will often agitate the reviewers.
 
@@ -114,7 +114,7 @@ However, the answer is immediate if informed that $\Pr[\mathrm{Normal} = x] \le 
 
 ### Example: Chernoff bounds
  
-Consider another striking example of the highlighting power of Big-O. Suppose \\(X_1, \ldots, X_n\\) and \\([0,1]\\)-bounded independent random variables and let $X = \sum_{i=1}^n X_i$ be its sum with expectation \\(\E[X] = \mu\\). We can now succintly showcase several aspets that are quite hard to grasp by only looking at formulas.
+Consider another striking example of the highlighting power of Big-O. Suppose \\(X_1, \ldots, X_n\\) and \\([0,1]\\)-bounded independent random variables and let $X = \sum_{i=1}^n X_i$ be its sum with expectation \\(\E[X] = \mu\\). We can now succinctly showcase several aspects that are quite hard to grasp by only looking at formulas.
 
 **Aspect:** The sum concentrates exponentially in the expectation. This shows, for example, that randomly throwing $O(n \log n)$ balls into $n$ bins will hit every bin at least once.
 
@@ -138,7 +138,7 @@ Statements with multiple Big-Os are inherently imprecise under Bachman-Landau. I
 
 > I have for many years avoided the notations “O(·) w.h.p.” and “o(·) w.h.p.” on the grounds that these combine two different asymptotic notations in an ambiguous and potentially dangerous way. (In which order do the quantifiers really come in a formal definition?)
 
-I propose to formalize such statements by fixing the order in which the "sufficiently-large constant" is determined. Specifically, we first fix the constant that replaces $O_1$, then the one for $O_2$, and so on. This greatly increases the expressive power while maintaining mathematical formality.
+I propose to formalize such statements by fixing the order in which the "sufficiently-large constant" is determined. Specifically, we first fix the constant that replaces $O_1$, then the one for $O_2$, and so on. This greatly increases expressive power while maintaining mathematical formality.
 <div markdown="1" class="theorem">
 **Fact**: Given an algorithm for 3-SAT that always outputs in \\( n^{O_1(1)} \\) time, there exists an algorithm for solving any Hamiltonian cycle instance in \\( n^{O_2(1)} \\) time.
 </div>
@@ -148,11 +148,11 @@ As a nice bonus, we can recall previous constants by using the same subscript.
 **Fact**: if $a \le O_1(1)$ and $b \le O_1(1)$, then $a + b \le O_2(1)$.
 </div>
 
-**Issue: Scope.** It would be clunky to use $O_1$ afresh only once in a paper. Therefore, I propose to keep the "scope" (i.e., the lifetime of a Big-Os constant) *minimal*. The scope should be clear from context, but as a default each new statement or paragraph should clear old constants. Of course, one can always explicitly save a constant for global use with \\( C_{\mathrm{important}} := O_1 \\).
+**Issue: Scope.** It would be clunky to use $O_1$ afresh only once in a paper. Therefore, I propose to keep the "scope" (i.e., the lifetime of a Big-Os constant) *minimal*. The scope should be clear from the context, but as a default, each new statement or paragraph should clear old constants. Of course, one can always explicitly save a constant for global use with \\( C_{\mathrm{important}} := O_1 \\).
 
 ### Example: "with high probability"
 
-Theoretical computer scientists often use the statement "*Algorithm $A$ is correct with high probability.*" to mean exactly "*Algorithm $A(O_1)$ is correct with probability at least \\( 1 - 1 / n^{O_1(1)} \\).*" Critically, the algorithm must be tunable in response to $O_1$ to facilitate any requested failure probability like \\( 1 - 1 / n^{100} \\), where $n$ should be clear from context (most commonly: input size).
+Theoretical computer scientists often use the statement "*Algorithm $A$ is correct with high probability.*" to mean exactly "*Algorithm $A(O_1)$ is correct with probability at least \\( 1 - 1 / n^{O_1(1)} \\).*" Critically, the algorithm must be tunable in response to $O_1$ to facilitate any requested failure probability like \\( 1 - 1 / n^{100} \\), where $n$ should be clear from the context (most commonly: input size).
 
 The specific failure probability is chosen such that another algorithm $B$ can call $A$ as many as $n^{O_1(1)}$ times and still have *all* of the invocations be correct with probability at least \\( 1 - 1/n^{O_1(1)} \\). This is achieved by tuning $A$ to have an invocation correct with probability \\( 1 - 1 / n^{O_2(1)} \\).
 
@@ -172,7 +172,7 @@ Big-O constants often need to depend on other parameters. For example: $O_{\eps}
 
 ### Example: undergraduate real analysis
 
-One can co-opt the new definition to rephrase the the standard $\eps-\delta$ definitions from introductory real analysis classes. Such usage, while formally correct, deviates from the customary usages of Big-O.
+One can co-opt the new definition to rephrase the standard $\eps-\delta$ definitions from introductory real analysis classes. Such usage, while formally correct, deviates from the customary usages of Big-O.
 
 <div markdown="1" class="theorem">
 **Definition**: A sequence $a_n$ tends to 0 when for all $\eps > 0$ it holds that $\vert a_n \vert < \eps$ for all $n > O_{\eps}(1)$.
@@ -203,19 +203,19 @@ An alternative formalization of Big-O would be to define $O(f(n))$ as a set of f
 Then, one can define $\Omega$ analogously. Binary operations between sets are defined like \\( A + B := \\{ n 
 \mapsto a(n)+b(n) \mid a(n) \in A, b(n) \in B\\} \\) (other operations are analogous). Unary operations are defined like \\( \exp(A) := \\{ n \mapsto \exp(a(n)) \mid a(n) \in A \\} \\).
 
-**Pros:** Such definition would be more in line with the standard Bachman-Landau convention (as compared to this proposal).
+**Pros:** Such a definition would be more in line with the standard Bachman-Landau convention (as compared to this proposal).
 
 **Equal:** Same as in this proposal, statements like \\( O(n) + O(n) = O(n) \\), \\( n^{O(1)} \\), or \\( \exp(-\Omega(n)) \\) are well defined. Issues involving dependence and ordering of quantifiers remain, but can be resolved in similar ways to this proposal.
 
 **Cons:** Most importantly, failure modes 1, 2, and 3 remain. Furthermore, the definition involves custom set operations, which are arguably non-intuitive for anyone not accustomed to Bachman-Landau.
 
-I believe that the cons of this approach outweight the pros.
+I believe that the cons of this approach outweigh the pros.
 
 # Other aspects
 
 - **How to interpret Big-Theta?** A statement $P$ containing $\Theta(x)$ is correct if we can replace "$\Theta(x)$" with "at most $O(x)$" and "at least $\Omega(x)$" with the statement holding (both must hold). For example, the statement "The optimal comparison-based sorting algorithm completes in $\Theta(n \log n)$ rounds." is correct.
 
-- **How to interpret Little-o and Little-omega?** The Little-o and Little-Omega are attached to an infinite process that needs to be specified or clear from context. A statement containing (a single) little-o is correct if we can replace it with some (adversarially chosen) sequence $(a_n)_n$ that tends to $0$. For example, \\(o_1(1) + o_2(1) = o_3(1)\\) is correct. Another example, "The quadratic sieve factors $n$ in $n^{o(1)}$ time (as $n \to \infty$)." is correct. Little-omega is analogous, except the sequence must tend to $\infty$. For example, "$P \neq NP$ would imply that the optimal algorithm for 3-SAT needs $n^{\omega(1)}$ time on instances of size $n$ (as $n \to \infty$)" is correct.
+- **How to interpret Little-o and Little-omega?** The Little-o and Little-Omega are attached to an infinite process that needs to be specified or clear from the context. A statement containing (a single) little-o is correct if we can replace it with some (adversarially chosen) sequence $(a_n)_n$ that tends to $0$. For example, \\(o_1(1) + o_2(1) = o_3(1)\\) is correct. Another example, "The quadratic sieve factors $n$ in $n^{o(1)}$ time (as $n \to \infty$)." is correct. Little-omega is analogous, except the sequence must tend to $\infty$. For example, "$P \neq NP$ would imply that the optimal algorithm for 3-SAT needs $n^{\omega(1)}$ time on instances of size $n$ (as $n \to \infty$)" is correct.
 
 <!-- # Other symbols -->
 

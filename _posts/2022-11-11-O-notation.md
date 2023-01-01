@@ -74,7 +74,7 @@ On a positive note, such a scenario is easily avoidable: we put forward several 
 
 # A Better Definition: A Sufficiently-Large Constant
 
-I propose to change the standard meaning of the Big-O. An expression $P$ using a single Big-O should be interpreted by replacing the $O$ with a sufficiently large constant and evaluating the expression. Specifically:
+I propose to change the standard meaning of the Big-O. A statement $P$ using a single Big-O should be interpreted by replacing the $O$ with a sufficiently large constant and evaluating the statement. Specifically:
 \\[ \exists C_0 > 0 \quad \forall C > C_0 \quad P(O \gets C), \\]
 where $P(O \gets C)$ denotes $P$ with the Big-O being replaced by $C$. For example, if
 \\[ P = \text{"BFS completes in at most } O(|V| + |E|) \text{ time."} \\]
@@ -96,7 +96,7 @@ We could have also used weaker approximations \\( n! \le n^{n+O(1)} e^{-n} \\) o
 
 # Big-Omega: A Sufficiently-Small Constant
 
-Analogously to Big-O, an expression $P$ using a single Big-Omega should be interpreted as:
+Analogously to Big-O, a statement $P$ using a single Big-Omega should be interpreted as:
 
 \\[ \exists \eps_0 > 0 \quad \forall \eps \in (0, \eps_0) \quad P(\Omega \gets \eps), \\]
 
@@ -132,13 +132,13 @@ Consider another striking example of the highlighting power of Big-O. Suppose \\
 **Fact**: \\( \Pr[X > \beta \mu] < \exp(- \Omega (\beta \ln \beta) \cdot \mu) . \\)
 </div>
 
-# Ordering of Quantifiers: Expressions with Multiple Big-Os
+# Ordering of Quantifiers: Statements with Multiple Big-Os
 
-Expressions with multiple Big-Os are inherently imprecise under Bachman-Landau. Indeed, Janson also [warns of potential problems](https://arxiv.org/pdf/1108.3924.pdf):
+Statements with multiple Big-Os are inherently imprecise under Bachman-Landau. Indeed, Janson also [warns of potential problems](https://arxiv.org/pdf/1108.3924.pdf):
 
 > I have for many years avoided the notations “O(·) w.h.p.” and “o(·) w.h.p.” on the grounds that these combine two different asymptotic notations in an ambiguous and potentially dangerous way. (In which order do the quantifiers really come in a formal definition?)
 
-I propose to formalize such expressions by fixing the order in which the "sufficiently-large constant" is determined. Specifically, we first fix the constant that replaces $O_1$, then the one for $O_2$, and so on. This greatly increases the expressive power while maintaining mathematical formality.
+I propose to formalize such statements by fixing the order in which the "sufficiently-large constant" is determined. Specifically, we first fix the constant that replaces $O_1$, then the one for $O_2$, and so on. This greatly increases the expressive power while maintaining mathematical formality.
 <div markdown="1" class="theorem">
 **Fact**: Given an algorithm for 3-SAT that always outputs in \\( n^{O_1(1)} \\) time, there exists an algorithm for solving any Hamiltonian cycle instance in \\( n^{O_2(1)} \\) time.
 </div>
@@ -152,7 +152,7 @@ As a nice bonus, we can recall previous constants by using the same subscript.
 
 ### Example: "with high probability"
 
-Theoretical computer scientists often use the expression "*Algorithm $A$ is correct with high probability.*" to mean exactly "*Algorithm $A(O_1)$ is correct with probability at least \\( 1 - 1 / n^{O_1(1)} \\).*" Critically, the algorithm must be tunable in response to $O_1$ to facilitate any requested failure probability like \\( 1 - 1 / n^{100} \\), where $n$ should be clear from context (most commonly: input size).
+Theoretical computer scientists often use the statement "*Algorithm $A$ is correct with high probability.*" to mean exactly "*Algorithm $A(O_1)$ is correct with probability at least \\( 1 - 1 / n^{O_1(1)} \\).*" Critically, the algorithm must be tunable in response to $O_1$ to facilitate any requested failure probability like \\( 1 - 1 / n^{100} \\), where $n$ should be clear from context (most commonly: input size).
 
 The specific failure probability is chosen such that another algorithm $B$ can call $A$ as many as $n^{O_1(1)}$ times and still have *all* of the invocations be correct with probability at least \\( 1 - 1/n^{O_1(1)} \\). This is achieved by tuning $A$ to have an invocation correct with probability \\( 1 - 1 / n^{O_2(1)} \\).
 
@@ -213,9 +213,9 @@ I believe that the cons of this approach outweight the pros.
 
 # Other aspects
 
-- **How to interpret Big-Theta?** An expression $P$ containing $\Theta(x)$ is correct if we can replace "$\Theta(x)$" with "at most $O(x)$" and "at least $\Omega(x)$" with the expression holding (both must hold). For example, the statement "The optimal comparison-based sorting algorithm completes in $\Theta(n \log n)$ rounds." is correct.
+- **How to interpret Big-Theta?** A statement $P$ containing $\Theta(x)$ is correct if we can replace "$\Theta(x)$" with "at most $O(x)$" and "at least $\Omega(x)$" with the statement holding (both must hold). For example, the statement "The optimal comparison-based sorting algorithm completes in $\Theta(n \log n)$ rounds." is correct.
 
-- **How to interpret Little-o and Little-omega?** The Little-o and Little-Omega are attached to an infinite process that needs to be specified or clear from context. A statement containing (a single) little-o is correct if we can replace it with some (adversarially chosen) sequence $(a_n)_n$ that tends to $0$. For example, Little-omega is analogous, except the sequence must tend to $\infty$.
+- **How to interpret Little-o and Little-omega?** The Little-o and Little-Omega are attached to an infinite process that needs to be specified or clear from context. A statement containing (a single) little-o is correct if we can replace it with some (adversarially chosen) sequence $(a_n)_n$ that tends to $0$. For example, \\(o_1(1) + o_2(1) = o_3(1)\\) is correct. Another example, "The quadratic sieve factors $n$ in $n^{o(1)}$ time (as $n \to \infty$)." is correct. Little-omega is analogous, except the sequence must tend to $\infty$. For example, "$P \neq NP$ would imply that the optimal algorithm for 3-SAT needs $n^{\omega(1)}$ time on instances of size $n$ (as $n \to \infty$)" is correct.
 
 <!-- # Other symbols -->
 

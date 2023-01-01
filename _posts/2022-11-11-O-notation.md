@@ -1,10 +1,9 @@
-    ---
+---
 layout: post
 title: A Better Big-O Notation
 hidden: true
 permalink: okbquvkrklilvtrvcatgixthgzayqjld
 ---
-
 
 
 <!-- [comment]: run by going to zuza.github.io (using br) and then $ bundle exec jekyll serve .. then chrome localhost:4000 -->

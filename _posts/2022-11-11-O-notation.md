@@ -1,6 +1,6 @@
 ---
 layout: post
-title: A Better Big-O Notation
+title: A Modern Big-O without Notation Abuse
 hidden: true
 permalink: okbquvkrklilvtrvcatgixthgzayqjld
 ---
@@ -11,14 +11,14 @@ permalink: okbquvkrklilvtrvcatgixthgzayqjld
 <!-- [comment]: I added a line preventing this from being published in index.html ... see the "if" with the title check -->
 
 
-**Summary**: The Big-O notation has been one of the most influential concepts in all of computer science. However, Big-O's textbook definition is no longer aligned with its usage by theoretical computer scientists. This is because the traditional notation does not effectively capture their ideas and intuitions. Therefore, I suggest an alternative notation that is more practical, formal, and in sync with current usage. In a nutshell: the $O$ should be interpreted as *a sufficiently-large universal constant*. Several aspects of the new definition are discussed.
+**Summary**: The Big-O notation has been one of the most influential concepts in all of computer science. However, Big-O's textbook definition is no longer aligned with its usage by theoretical computer scientists. This is because the traditional notation does not effectively capture their ideas and intuitions. Therefore, I suggest an alternative notation that is more practical, formal, and in sync with current usage. In a nutshell: the $O$ should be interpreted as *a sufficiently-large universal constant* (without any attached infinite process). Several aspects of the new definition are discussed.
 
 *Note:* This article is NOT a primer. If needed, please see a good introduction [here](https://simple.wikipedia.org/wiki/Big_O_notation) or [here](https://en.wikipedia.org/wiki/Big_O_notation).
 
 # Introduction
 
 Computer science adopted the Big-O notation from number theory, where it was pioneered by Bachman and Landau in the 1900s. We review the standard definition.
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **The Bachman-Landau definition:** Given functions \\( f, g : \\{1, 2, \ldots\\} \to \mathbb{R} \\) we write \\( f(n) = O( g(n) ) \\) when there exist \\( C > 0, n_0 > 0 \\) such that \\( \vert f(n) \vert \le C \cdot g(n) \\) for all \\( n \ge n_0 \\).
 </div>
 
@@ -30,7 +30,7 @@ The success of Big-O has led to its ubiquity throughout computer science. Howeve
 
 ### Failure mode 1: unnecessary infinite process
 
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact:** The breadth-first search takes $O(|V| + |E|)$ time on a graph $G = (V, E)$.
 </div>
 
@@ -39,12 +39,12 @@ The right interpretation is that there exists a constant $C > 0$ (that depends o
 
 ### Failure mode 2: no Big-O lower bounds
 
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact:** There exists a constant $C > 0$ such that [IID](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) sampling of at least $C \cdot \sqrt{n}$ elements from a universe of size $n$ will ensure a collision (drawing of the same element twice) with probability of at least 99%.
 </div>
 
 Replacing the first part with *"IID sampling of at least $O(\sqrt{n})$ elements ..."* will often land you in hot water with reviewers because Bachman-Landau does not allow for expressing lower bounds as $O(\ldots)$. Writing *"IID sampling of at least $\Omega(\sqrt{n})$ elements ..."* is plain wrong. The only unimpeachable way to use Big-O in this context would be to write something impractical like:
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact:** Let $f(n)$ be the smallest integer such that IID sampling of at least $f(n)$ elements from a universe of size $n$ will ensure a collision with probability at least 99%. Then $f(n) = O(\sqrt{n})$.
 </div>
 I believe this is suboptimal.
@@ -53,16 +53,16 @@ I believe this is suboptimal.
 
 Using Big-O in premises (rather than conclusions) often leads to issues. Consider the following quote ([source](https://dl.acm.org/doi/10.1145/3086465)). What exactly does it mean?
 
-[comment]: <div markdown="1" class="theorem">
-![A fundamental result by Karger [10] states that for any λ-edge-connected graph with n nodes, independently sampling each edge with probability p = Ω(log (n)/λ) results in a graph that has edge connectivity Ω(λp), with high probability.](/assets/talg-karger-omega.png){:height="50px"}
+> A fundamental result by Karger [10] states that for any $\lambda$-edge-connected graph with $n$ nodes, independently sampling each edge with probability $p = \Omega(\log (n) / \lambda)$ results in a graph that has edge connectivity $\Omega(\lambda p)$, with high probability.
 
-The most natural interpretation: "Given any infinite family, sampling with any \\( p(n) = \Omega(\log n / \lambda) \\) yields connectivity \\( \Omega(\lambda p) \\)" is wrong, as choosing \\( p(n) = 0.01 \ln(n) / \lambda \\) can result in a disconnected graph with probability tending to \\( 1 \\) (e.g., consider a path where consecutive vertices are connected with \\( \lambda \\) parallel edges). The constant replacing the first $\Omega$ must be sufficiently large.
+The most natural interpretation: "Given any infinite family, sampling with any \\( p(n) = \Omega(\log(n) / \lambda) \\) yields connectivity \\( \Omega(\lambda p) \\)" is wrong, as choosing \\( p(n) = 0.01 \ln(n) / \lambda \\) can result in a disconnected graph with probability tending to \\( 1 \\) (e.g., consider a path where consecutive vertices are connected with \\( \lambda \\) parallel edges). The constant replacing the first $\Omega$ must be sufficiently large.
 
 Similarly, it is customary to use Big-O in algorithms. Consider this excerpt:
 
-![T = O(p κ1 κ2 κ3 log κ/ε); for t = 0 to T do; ...](/assets/kyng-algorithm.png){:height="60px" width="400px"}
+> 3: &nbsp;&nbsp;&nbsp;&nbsp; $T \gets O(p \kappa_1 \kappa_2 \kappa_3 \log(\frac{\kappa}{\eps}))$ \\
+> 4: &nbsp;&nbsp;&nbsp;&nbsp; **for** $t = 0$ to $T$ **do**
 
-([Source](https://arxiv.org/pdf/2102.06977.pdf)) The statement $T = O(\ldots)$ would formally assert that setting $T \gets 1$ is valid, but the algorithm fails in this case.
+([Source](https://arxiv.org/pdf/2102.06977.pdf)) The statement $T = O(\ldots)$ would formally assert that setting $T \gets 1$ is valid, but the algorithm fails in this case. The notation was used informally.
 
 ### Failure mode 4: colloquial usage and lack of formality
 
@@ -82,14 +82,15 @@ Then,
 \\[ P(O \gets 7) = \text{"BFS completes in at most } 7(|V| + |E|) \text{ time."} \\]
 This statement $P$ is correct as, indeed, (in whichever RAM model) there always exists a sufficiently large constant $C_0 > 0$ such that the statement is true for $C > C_0$. We assume this notation in the rest of the article.
 
-**Why not only "\\( \exists C_0 > 0\ \ P(O \gets C_0) \\)"**? I believe this would be disconnected from current usage. For example, correct statements would include "\\(O(1) \le 5\\)" (choose $O \gets 4$), or even "An algorithm with runtime $n^{O(1)}$ is linear." (choose $O \gets 1$).
+**Digression: Why not "\\( \exists C_0 > 0\ \ P(O \gets C_0) \\)"**?
+I believe this would be disconnected from current usage. For example, correct statements would include "\\(4 < O(1) < 5\\)" (choose $O \gets 4.5$), or even "An algorithm with runtime $n^{O(1)}$ is linear." (choose $O \gets 1$).
 
 ### Example: Stirling's approximation
 
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact**: For all $n \in \mathbb{N}$ it holds that \\( n! \le O(n^{n + 1/2} e^{-n}) \\).
 </div>
-
+    
 Note that the relation operator is "$\le$", and replacing it with the customary "$=$" would be incorrect under our definition. The latter was always an abuse of notation. This is a (minor) point of divergence that I believe is necessary for mathematical precision.
 
 We could have also used weaker approximations \\( n! \le n^{n+O(1)} e^{-n} \\) or \\( n! \le \exp( O(n \log n) ) \\) (both when $n \ge 2$), which are now also perfectly formal. Unfortunately, using such approximations in a formal publication will often agitate the reviewers.
@@ -116,21 +117,25 @@ However, the answer is immediate if informed that $\Pr[\mathrm{Normal} = x] \le 
  
 Consider another striking example of the highlighting power of Big-O. Suppose \\(X_1, \ldots, X_n\\) and \\([0,1]\\)-bounded independent random variables and let $X = \sum_{i=1}^n X_i$ be its sum with expectation \\(\E[X] = \mu\\). We can now succinctly showcase several aspects that are quite hard to grasp by only looking at formulas.
 
-**Aspect:** The sum concentrates exponentially in the expectation. This shows, for example, that randomly throwing $O(n \log n)$ balls into $n$ bins will hit every bin at least once.
-
-<div markdown="1" class="theorem">
+**Aspect:** The sum concentrates exponentially in the expectation. 
+<div markdown=1 class="theorem">
 **Fact**: \\( \Pr[X > 2 \mu] < \exp(- \Omega(\mu)). \\)
 </div>
+This shows, for example, that randomly throwing $O(n \log n)$ balls into $n$ bins will hit every bin at least once.
+<br/><br/>
 
-**Aspect:** When the deviation is close to $1$, the concentration is quadratic in the deviation. This shows, for example, that polling $O(1/\eps^2)$ people yields an $\eps \mu$ error.
-<div markdown="1" class="theorem">
+**Aspect:** When the deviation is close to $1$, the concentration is quadratic in the deviation. 
+<div markdown=1 class="theorem">
 **Fact**: \\( \Pr[X > (1 + \eps) \mu] < \exp(- \Omega(\eps^2\mu) ) . \\)
 </div>
+This shows, for example, that polling $O(1/\eps^2)$ people yields an $\eps \mu$ error.
+<br/><br/>
 
-**Aspect:** When the deviation is large, the concentration acts like a Poisson variable. This shows, for example, that randomly throwing $n$ balls into $n$ bins will leave the most congested bin with at most $O(\frac{\log n}{\log \log n})$ balls.
-<div markdown="1" class="theorem">
+**Aspect:** When the deviation is large, the concentration acts like a Poisson variable.
+<div markdown=1 class="theorem">
 **Fact**: \\( \Pr[X > \beta \mu] < \exp(- \Omega (\beta \ln \beta) \cdot \mu) . \\)
 </div>
+This shows, for example, that randomly throwing $n$ balls into $n$ bins will leave the most congested bin with at most $O(\frac{\log n}{\log \log n})$ balls.
 
 # Ordering of Quantifiers: Statements with Multiple Big-Os
 
@@ -139,12 +144,12 @@ Statements with multiple Big-Os are inherently imprecise under Bachman-Landau. I
 > I have for many years avoided the notations “O(·) w.h.p.” and “o(·) w.h.p.” on the grounds that these combine two different asymptotic notations in an ambiguous and potentially dangerous way. (In which order do the quantifiers really come in a formal definition?)
 
 I propose to formalize such statements by fixing the order in which the "sufficiently-large constant" is determined. Specifically, we first fix the constant that replaces $O_1$, then the one for $O_2$, and so on. This greatly increases expressive power while maintaining mathematical formality.
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact**: Given an algorithm for 3-SAT that always outputs in \\( n^{O_1(1)} \\) time, there exists an algorithm for solving any Hamiltonian cycle instance in \\( n^{O_2(1)} \\) time.
 </div>
 
 As a nice bonus, we can recall previous constants by using the same subscript.
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact**: if $a \le O_1(1)$ and $b \le O_1(1)$, then $a + b \le O_2(1)$.
 </div>
 
@@ -157,12 +162,12 @@ Theoretical computer scientists often use the statement "*Algorithm $A$ is corre
 The specific failure probability is chosen such that another algorithm $B$ can call $A$ as many as $n^{O_1(1)}$ times and still have *all* of the invocations be correct with probability at least \\( 1 - 1/n^{O_1(1)} \\). This is achieved by tuning $A$ to have an invocation correct with probability \\( 1 - 1 / n^{O_2(1)} \\).
 
 Let's consider an involved example. Customarily, the "with high probability" Big-O preempts every other Big-O.
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact**: Given a \\( \lambda \\)-connected graph with $n$ vertices, independently sampling each edge with probabiliy \\( p \ge \frac{O_2(\log n)}{\lambda} \\) will yield a graph that is $O_1(\log n)$ connected with high probability.
 </div>
 
 In full formality, the statement could be expanded as follows. Contemporary papers are lax about the ordering of quantifiers in such claims.
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact**: Given a \\( \lambda \\)-connected graph with $n$ vertices, independently sampling each edge with probabiliy \\( p \ge \frac{O_3(\log n)}{\lambda} \\) will yield a graph that is $O_2(\log n)$ connected with probability at least \\( 1 - \frac{1}{n^{O_1(1)}} \\).
 </div>
 
@@ -174,19 +179,19 @@ Big-O constants often need to depend on other parameters. For example: $O_{\eps}
 
 One can co-opt the new definition to rephrase the standard $\eps-\delta$ definitions from introductory real analysis classes. Such usage, while formally correct, deviates from the customary usages of Big-O.
 
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Definition**: A sequence $a_n$ tends to 0 when for all $\eps > 0$ it holds that $\vert a_n \vert < \eps$ for all $n > O_{\eps}(1)$.
 </div>
 
 A related example follows.
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Definition**: A function \\( f : \mathbb{R} \to \mathbb{R} \\) is uniformly continuous when: For all $x,y$ and $\eps > 0$ we have \\( \vert x - y \vert < \Omega_{\eps}(1) \\) \\( \implies \\) \\( \vert f(x) - f(y) \vert < \eps \\).
 </div>
 
 
 ### Example: Ruzsa-Szemeredi
 
-<div markdown="1" class="theorem">
+<div markdown=1 class="theorem">
 **Fact**: Every $n$-vertex graph with $\Omega_{\eps}(n^3)$ triangles can be made triangle-tree by removing at most $\eps n^2$ edges.
 </div>
 
@@ -229,7 +234,7 @@ I believe that the cons of this approach outweigh the pros.
 <!-- omega ... tends to infinity ... there exists a sequence that tends to infinity such that -->
 
 ## Acknowledgement
-I would like to thank Bernhard Haeupler for spurring my thoughts about this topic. Furthermore, I thank Roie Levin for reading the drafts and giving insightful comments.
+I would like to thank Bernhard Haeupler for spurring my thoughts about this topic. Furthermore, I thank Roie Levin and Filip Pavetic for reading the drafts and giving insightful comments.
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({

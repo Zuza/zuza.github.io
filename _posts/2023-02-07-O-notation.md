@@ -1,8 +1,6 @@
 ---
 layout: post
 title: A Modern Big-O without Notation Abuse
-hidden: true
-permalink: okbquvkrklilvtrvcatgixthgzayqjld
 ---
 **Summary**: The Big-O notation has been one of the most influential concepts in all of computer science. However, Big-O's textbook definition is no longer aligned with its usage by theoretical computer scientists. This is because the traditional notation does not effectively capture their ideas and intuitions. Therefore, I suggest an alternative notation that is more practical, formal, and in sync with current usage. In a nutshell: the $O$ should be interpreted as *a sufficiently-large universal constant* (without any attached infinite process). Several aspects of the new definition are discussed.
 
@@ -13,6 +11,8 @@ permalink: okbquvkrklilvtrvcatgixthgzayqjld
 Computer science adopted the Big-O notation from number theory, where it was pioneered by Bachman and Landau in the 1900s. We review the standard definition.
 <div markdown=1 class="theorem">
 **The Bachman-Landau definition:** Given functions \\( f, g : \\{1, 2, \ldots\\} \to \mathbb{R} \\) we write \\( f(n) = O( g(n) ) \\) when there exist \\( C > 0, n_0 > 0 \\) such that \\( \vert f(n) \vert \le C \cdot g(n) \\) for all \\( n \ge n_0 \\).
+
+Similarly, $f(n) = \Omega(g(n))$ when there exist \\( C > 0, n_0 > 0 \\) such that \\( \vert f(n) \vert\ {\color{blue}\ge}\ C \cdot g(n) \\) for all \\( n \ge n_0 \\).
 </div>
 
 Big-O turned out to be one of the most influential driving forces of algorithm design. Researchers using Big-O were implicitly guided to focus on the big picture: ignore constants and lower-order terms, and only focus on asymptotics (as any finite-value behavior is cropped off).
@@ -27,10 +27,26 @@ The success of Big-O has led to its ubiquity throughout computer science. Howeve
 **Fact:** The breadth-first search takes $O(|V| + |E|)$ time on a graph $G = (V, E)$.
 </div>
 
-**Issue:** what exactly is the infinite process \\(n \in \\{ 1, 2, \ldots \\}\\) here? The implied process is "for every infinite sequence of graphs", but this is extremely unwieldy and does not correspond to the intuition that computer scientists want to convey.
-The right interpretation is that there exists a constant $C > 0$ (that depends on the underlying RAM model) such that the breath-first search (BFS) completes in at most $C \cdot (|V| + |E|)$ time.
+**Issue:** what exactly is the infinite process \\(n \in \\{ 1, 2, \ldots \\}\\) here? As written, the meaning is at best ambiguous as the Bachman-Landau definition only handles a single variable. At worst, the statement is wrong in that sense that parsing it should throw an error. This definition+statement combo can be found in first-year algorithms classes and teaches students that definitions are handwavy and informal. This should be unacceptable.
 
-### Failure mode 2: no Big-O lower bounds
+On an intuitive level, the implied infinite process is "for every infinite sequence of graphs", but this is unwieldy and does not match the intuition that computer scientists want to convey.
+The right interpretation is that a constant $C > 0$ exists (it depends on the underlying RAM model) such that the breath-first search (BFS) completes in at most $C \cdot (|V| + |E|)$ time.
+
+### Failure mode 2: informal usage in algorithms
+
+It is customary to use Big-O in algorithms. A typically usage follows:
+
+> Theorem: Algorithm X computes the answer in \\( {\color{blue}{O(n)}} \\) steps.
+>
+> Algorithm X: \\
+> &nbsp;&nbsp; for step in 1, ..., \\( {\color{blue}{O(n)}} \\): \\
+> &nbsp;&nbsp;&nbsp;&nbsp; ...
+
+**Issue:** Formally, Algorithm X allows for the loop to run a total of $1$ steps since $1 = O(n)$. However, actually doing this will almost always be wrong. Examples are found [here (alg1)](https://arxiv.org/pdf/2102.06977.pdf), [here (alg3)](https://arxiv.org/pdf/2003.08929.pdf), [here (alg1)](https://papers.nips.cc/paper/2021/file/b035d6563a2adac9f822940c145263ce-Paper.pdf), [here (alg1 & alg2)](https://proceedings.neurips.cc/paper/2018/file/79a49b3e3762632813f9e35f4ba53d6c-Paper.pdf), [here (alg1)](https://epubs.siam.org/doi/pdf/10.1137/1.9781611977073.107), [here (alg1)](https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=9317991), [here (alg2)](https://arxiv.org/pdf/2206.02348.pdf). The notation was used informally.
+
+Moreover, replacing $O(n)$ with $\Omega(n)$ is also typically wrong, as $0.01 n$ is also not enough steps. Replacing it with $\Theta(n)$ is wrong for the same reason. The intended meaning is to run the loop for $C \cdot n$ steps, where $C > 0$ is a sufficiently-large constant. This is exactly how this proposal redefines it. My hot take is: take a typical computer science paper and reinterpret Big-Os by following this proposal. It will immediately become less wrong than if one uses Bachman-Landau's interpretation.
+
+### Failure mode 3: no Big-O lower bounds or premises
 
 <div markdown=1 class="theorem">
 **Fact:** There exists a constant $C > 0$ such that [IID](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables) sampling of at least $C \cdot \sqrt{n}$ elements from a universe of size $n$ will ensure a collision (drawing of the same element twice) with probability of at least 99%.
@@ -40,28 +56,20 @@ Replacing the first part with *"IID sampling of at least $O(\sqrt{n})$ elements 
 <div markdown=1 class="theorem">
 **Fact:** Let $f(n)$ be the smallest integer such that IID sampling of at least $f(n)$ elements from a universe of size $n$ will ensure a collision with probability at least 99%. Then $f(n) = O(\sqrt{n})$.
 </div>
-I believe this is suboptimal.
+I believe this inflexibility is suboptimal.
 
-### Failure mode 3: Bachman-Landau works only for conclusions
 
-Using Big-O in premises (rather than conclusions) often leads to issues. Consider the following quote ([source](https://dl.acm.org/doi/10.1145/3086465)). What exactly does it mean?
+As a general rule: Using Big-O in premises (rather than conclusions) or in lower bounds (rather than upper bounds) often leads to issues. Similarly to the example above, consider the following quote ([source](https://dl.acm.org/doi/10.1145/3086465)). What exactly does it mean?
 
 > A fundamental result by Karger [10] states that for any $\lambda$-edge-connected graph with $n$ nodes, independently sampling each edge with probability $p = \Omega(\log (n) / \lambda)$ results in a graph that has edge connectivity $\Omega(\lambda p)$, with high probability.
 
-The most natural interpretation: "Given any infinite family, sampling with any \\( p(n) = \Omega(\log(n) / \lambda) \\) yields connectivity \\( \Omega(\lambda p) \\)" is wrong, as choosing \\( p(n) = 0.01 \ln(n) / \lambda \\) can result in a disconnected graph with probability tending to \\( 1 \\) (e.g., consider a path where consecutive vertices are connected with \\( \lambda \\) parallel edges). The constant replacing the first $\Omega$ must be sufficiently large.
-
-Similarly, it is customary to use Big-O in algorithms. Consider this excerpt:
-
-> 3: &nbsp;&nbsp;&nbsp;&nbsp; $T \gets O(p \kappa_1 \kappa_2 \kappa_3 \log(\frac{\kappa}{\eps}))$ \\
-> 4: &nbsp;&nbsp;&nbsp;&nbsp; **for** $t = 0$ to $T$ **do**
-
-([Source](https://arxiv.org/pdf/2102.06977.pdf)) The statement $T = O(\ldots)$ would formally assert that setting $T \gets 1$ is valid, but the algorithm fails in this case. The notation was used informally.
+The most natural interpretation: "Given any infinite family, sampling with any \\( p(n) = \Omega(\log(n) / \lambda) \\) yields connectivity \\( \Omega(\lambda p) \\)" is wrong, as choosing \\( p(n) = 0.01 \ln(n) / \lambda \\) can result in a disconnected graph with probability tending to \\( 1 \\) (e.g., consider a path where consecutive vertices are connected with \\( \lambda \\) parallel edges). The constant replacing the first $\Omega$ must be sufficiently large. The inflexibility of Big-O caused the statement to be imprecise at best.
 
 ### Failure mode 4: colloquial usage and lack of formality
 
 On its face, Bachman-Landau does not explicitly define the meaning of statements like \\( O(n) + O(n) = O(n) \\), \\( n^{O(1)} \\), or \\( \exp(-\Omega(n)) \\). As such, researchers attach their own semantics to these. These vary in formality and mean different things to different authors.
 
-At the same time, Big-O is proliferating to the point where many papers never explicitly specify any constants. In an extreme limit, this might lead to a world where papers are written exclusively with Big-Os (due to their inherent practicality), while its usage has become informal, unspecified folklore, and uncoordinated between subareas. In such a world, only domain experts would be able to infer the correct semantics of formal statements, introducing unnecessary barriers to interdisciplinarity in science.
+At the same time, Big-O is proliferating to the point where many papers never explicitly specify any constants. In an extreme limit, this might lead to a world where papers are written exclusively with Big-Os (due to their inherent practicality), while its usage has become informal, unspecified folklore, and uncoordinated between subareas. In such a world, only domain experts would be able to infer the correct semantics of formal statements, introducing unnecessary barriers to interdisciplinarity in science. At worst, informality and misinterpretations cause wrong statements to be claimed.
 
 On a positive note, such a scenario is easily avoidable: we put forward several proposals on how to formalize Big-Os (like this manuscript!), and papers specify which proposal they follow.
 
@@ -148,7 +156,19 @@ As a nice bonus, we can recall previous constants by using the same subscript.
 
 **Issue: Scope.** It would be clunky to use $O_1$ afresh only once in a paper. Therefore, I propose to keep the "scope" (i.e., the lifetime of a Big-Os constant) *minimal*. The scope should be clear from the context, but as a default, each new statement or paragraph should clear old constants. Of course, one can always explicitly save a constant for global use with \\( C_{\mathrm{important}} := O_1 \\).
 
-### Example: "with high probability"
+### Example: "For sufficiently large $n$"
+
+In many subareas of computer science and mathematics one only wants to make statements that hold for sufficiently large values of (the underlying infinite process) $n$. Consider the statement:
+
+\\[ \Omega(n \log n) \ge O(n) . \\]
+
+Within this proposal, such a statement is not true as written (for any ordering of quantifiers). On the other hand, the intended correct statement is:
+
+\\[ \Omega_1(n \log n) \ge O_1(n) \text{ for } n > O_2(1) . \\]
+
+I propose that such intentions be supported: writing "all statements in this paper hold only for sufficiently large $n$" effectively means automatically transforming all statements from the first into the second one. More generally, each statement gets appended with \\(\text{for } n > O_{\text{last}}(1) \\), where the introduced $O$ is last in the quantifier ordering.
+
+### Example: "With high probability"
 
 Theoretical computer scientists often use the statement "*Algorithm $A$ is correct with high probability.*" to mean exactly "*Algorithm $A(O_1)$ is correct with probability at least \\( 1 - 1 / n^{O_1(1)} \\).*" Critically, the algorithm must be tunable in response to $O_1$ to facilitate any requested failure probability like \\( 1 - 1 / n^{100} \\), where $n$ should be clear from the context (most commonly: input size).
 
@@ -211,7 +231,7 @@ I believe that the cons of this approach outweigh the pros.
 
 # Other aspects
 
-- **How to interpret Big-Theta?** A statement $P$ containing $\Theta(x)$ is correct if we can replace "$\Theta(x)$" with "at most $O(x)$" and "at least $\Omega(x)$" with the statement holding (both must hold). For example, the statement "The optimal comparison-based sorting algorithm completes in $\Theta(n \log n)$ rounds." is correct.
+- **How to interpret Big-Theta?** A statement $P$ containing $\Theta(x)$ is correct if we can replace "$\Theta(x)$" with "at most $O(x)$" and "at least $\Omega(x)$" with the statement holding (both must hold). For example, this statement is correct: "The optimal comparison-based sorting algorithm completes in $\Theta(n \log n)$ rounds."
 
 - **How to interpret Little-o and Little-omega?** The Little-o and Little-Omega are attached to an infinite process that needs to be specified or clear from the context. A statement containing (a single) little-o is correct if we can replace it with some (adversarially chosen) sequence $(a_n)_n$ that tends to $0$. For example, \\(o_1(1) + o_2(1) = o_3(1)\\) is correct. Another example, "The quadratic sieve factors $n$ in $n^{o(1)}$ time (as $n \to \infty$)." is correct. Little-omega is analogous, except the sequence must tend to $\infty$. For example, "$P \neq NP$ would imply that the optimal algorithm for 3-SAT needs $n^{\omega(1)}$ time on instances of size $n$ (as $n \to \infty$)" is correct.
 
@@ -227,7 +247,7 @@ I believe that the cons of this approach outweigh the pros.
 <!-- omega ... tends to infinity ... there exists a sequence that tends to infinity such that -->
 
 ## Acknowledgement
-I would like to thank Bernhard Haeupler for spurring my thoughts about this topic. Furthermore, I thank Roie Levin and Filip Pavetic for reading the drafts and giving insightful comments.
+I would like to thank Bernhard Haeupler for spurring my thoughts about this topic. Furthermore, I thank Roie Levin, Ellis Hershkowitz, and Filip Pavetic for reading the drafts and giving insightful comments.
 
 <script type="text/x-mathjax-config">
   MathJax.Hub.Config({

@@ -5,7 +5,7 @@ title: A Modern Big-O without Notation Abuse
 **Summary**: The Big-O notation has been one of the most influential concepts in all of computer science. However, Big-O's textbook definition is no longer aligned with its usage by theoretical computer scientists. This is because the traditional notation does not effectively capture their ideas and intuitions. Therefore, I suggest an alternative notation that is more practical, formal, and in sync with current usage. In a nutshell: the $O$ should be interpreted as *a sufficiently-large universal constant* (without any attached infinite process). Several aspects of the new definition are discussed.
 
 *Note:* This article is NOT a primer. If needed, please see a good introduction [here](https://simple.wikipedia.org/wiki/Big_O_notation) or [here](https://en.wikipedia.org/wiki/Big_O_notation).
-
+ 
 # Introduction
 
 Computer science adopted the Big-O notation from number theory, where it was pioneered by Bachman and Landau in the 1900s. We review the standard definition.
